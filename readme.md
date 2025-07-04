@@ -1,4 +1,4 @@
-<p align="center">
+<p align="left">
   <img src="https://img.icons8.com/fluency/96/000000/todo-list.png" alt="ToDo List Icon" width="96" height="96"/>
 </p>
 
