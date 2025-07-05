@@ -1,0 +1,24 @@
+{
+  "name": "todolist-app",
+  "version": "1.0.0",
+  "description": "A simple To-Do List application built with PHP and Tailwind CSS",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx @tailwindcss/cli -i ./src/input.css -o ./public/css/style.css --watch",
+    "build": "npx @tailwindcss/cli -i ./src/input.css -o ./public/css/style.css --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xrtvann/todolist-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xrtvann/todolist-app/issues"
+  },
+  "homepage": "https://github.com/xrtvann/todolist-app#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.1.11"
+  }
+}
