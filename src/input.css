@@ -2,16 +2,10 @@
 @import "tailwindcss";
 
 @theme {
-    
-    --font-poppins: 'Poppins', sans-serif;
-    --primary: #4285F4, 
-    --secondary: #FABB05, 
-    --tertiary: #34A853, 
-    --accent: #FBBC04, 
-    --surface: #FFFFFF, 
-    --background: #F5F6FA, 
-    --on-primary: #FFFFFF, 
-    --on-secondary: #212121, 
-    --on-surface:  #212121,
-
+  --font-poppins: "Poppins", sans-serif;
+  --color-primary: #362fd9;
+  --color-secondary: #1aacac;
+  --color-accent: #2e97a7;
+  --color-text: #080720;
+  --color-background: #f4f4fd;
 }
