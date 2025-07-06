@@ -13,8 +13,12 @@
 <body class="font-poppins bg-gray-100">
     <div class="flex min-h-screen">
         <?php include('../views/templates/sidebar.php'); ?>
-        <?php include('../views/templates/navbar.php'); ?>
+
+        <div class="flex-1 flex flex-col">
+            <?php include('../views/templates/navbar.php'); ?>
+        </div>
     </div>
+
 
     <script src="js/app.js"></script>
 </body>

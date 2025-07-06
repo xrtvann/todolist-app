@@ -1,8 +1,10 @@
-   <aside class="h-screen w-72 bg-grey-200 shadow-sm flex flex-col p-4 bg-white z-10">
-       <div class="brand flex items-center space-x-5 mb-8">
-           <img src="https://img.icons8.com/fluency/96/000000/todo-list.png" alt="todo-list-icon" width="40">
-           <h3 class="text-2xl font-bold text-primary">Todolist App</h3>
+   <aside class="h-screen w-72 bg-grey-200 shadow-sm flex flex-col p-4 bg-white z-10 translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+       <div class="brand flex items-center space-x-3 mb-8">
+           <img src="https://img.icons8.com/fluency/96/000000/todo-list.png" alt="todo-list-icon" width="35">
+           <h3 class="text-xl font-bold text-primary">Todolist App</h3>
        </div>
+
+
        <nav class="flex flex-col justify-between flex-1">
            <ul class="space-y-4">
                <li><a href="#" class="block px-4 py-2 rounded  hover:text-white  font-medium bg-primary text-white"><i class="fa-solid fa-chart-line mr-4"></i>Dashboard</a></li>
