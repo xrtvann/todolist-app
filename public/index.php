@@ -14,7 +14,7 @@
     <div class="flex min-h-screen">
         <?php include('../views/templates/sidebar.php'); ?>
 
-        <div class="flex-1 flex flex-col">
+        <div id="mainContent" class="flex-1 flex flex-col">
             <?php include('../views/templates/navbar.php'); ?>
         </div>
     </div>

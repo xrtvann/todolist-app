@@ -15,9 +15,17 @@ function toggleUserMenu() {
 
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
-  const wrapper = document.getElementById("wrapper");
 
-  sidebar.classList.toggle("-translate-x-full");
-  sidebar.classList.toggle("translate-x-0");
   sidebar.classList.toggle("w-72");
+  sidebar.classList.toggle("w-20");
+
+  // Toggle smooth visibility of sidebar text
+  const sidebarTexts = document.querySelectorAll(".sidebar-text");
+  sidebarTexts.forEach((el) => {
+    el.classList.toggle("opacity-0");
+    el.classList.toggle("w-0");
+    el.classList.toggle("overflow-hidden");
+    el.classList.toggle("transition-all");
+    el.classList.toggle("duration-300");
+  });
 }
