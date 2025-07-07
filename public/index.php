@@ -2,6 +2,8 @@
 <html lang="en">
 
 <?php
+require_once '../config/database.php';
+connectDatabase();
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 $pageTitles = [
     'dashboard' => 'Dashboard',
@@ -13,6 +15,7 @@ $pageTitles = [
 ];
 $title = isset($pageTitles[$page]) ? $pageTitles[$page] : 'Todolist App';
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
