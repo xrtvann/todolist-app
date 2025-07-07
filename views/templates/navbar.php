@@ -1,4 +1,4 @@
-<header class="">
+<header class="navbar">
     <nav class="flex items-center justify-between bg-white p-4 shadow-sm">
         <div class="left-menu flex items-center">
             <div class="toggle-sidebar">
