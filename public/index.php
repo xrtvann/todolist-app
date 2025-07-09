@@ -29,19 +29,25 @@ $title = isset($pageTitles[$page]) ? $pageTitles[$page] : 'Todolist App';
     <div class="flex min-h-screen">
         <?php include('../views/templates/sidebar.php'); ?>
 
-        <div id="mainContent" class="flex-1 flex flex-col">
-            <?php include('../views/templates/navbar.php'); ?>
+        <div id="mainContent" class="flex-1 flex flex-col h-screen">
+            <div class="sticky top-0 bg-white shadow">
+                <?php include('../views/templates/navbar.php'); ?>
+            </div>
 
-            <?php
-            $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
-            $allowed_pages = ['dashboard', 'tasks', 'category', 'report', 'settings', 'logout'];
+            <div class="flex-1 overflow-auto">
+                <?php
+                $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
+                $allowed_pages = ['dashboard', 'tasks', 'category', 'report', 'settings', 'logout'];
 
-            if (in_array($page, $allowed_pages)) {
-                include("../views/pages/" . $page . ".php");
-            } else {
-                echo "<p>Halaman tidak ditemukan.</p>";
-            }
-            ?>
+                if (in_array($page, $allowed_pages)) {
+                    include("../views/pages/" . $page . ".php");
+                } else {
+                    echo "<p>Halaman tidak ditemukan.</p>";
+                }
+                ?>
+            </div>
+
+
         </div>
     </div>
 

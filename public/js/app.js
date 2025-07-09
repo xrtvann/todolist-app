@@ -29,3 +29,11 @@ function toggleSidebar() {
     el.classList.toggle("duration-300");
   });
 }
+
+function showModal(type, menu) {
+  const modalType = `${type}-${menu}-modal`;
+  const modal = document.getElementById(modalType);
+  if (modal) {
+    modal.classList.toggle("hidden");
+  }
+}

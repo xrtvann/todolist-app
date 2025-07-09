@@ -1,5 +1,5 @@
 <?php $currentPage = isset($_GET['page']) ? $_GET['page'] : 'dashboard'; ?>
-<aside class="h-screen w-72 z-10 bg-grey-200 shadow-sm flex flex-col p-4 bg-white transition-all duration-300 ease-in-out" id="sidebar">
+<aside class="min-h-screen w-72 z-10 bg-grey-200 shadow-sm flex flex-col p-4 bg-white transition-all duration-300 ease-in-out" id="sidebar">
     <div class="brand flex items-center space-x-3 mb-8">
         <img src="https://img.icons8.com/fluency/96/000000/todo-list.png" alt="todo-list-icon" width="35">
         <h3 class="text-xl font-bold text-primary sidebar-text">Todolist App</h3>
