@@ -37,3 +37,11 @@ function showModal(type, menu) {
     modal.classList.toggle("hidden");
   }
 }
+
+function closeModal(type, menu) {
+  const modalType = `${type}-${menu}-modal`;
+  const modal = document.getElementById(modalType);
+  if (modal) {
+    modal.classList.add("hidden");
+  }
+}

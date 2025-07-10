@@ -74,12 +74,13 @@ $id = generateCategoryID();
         </div>
     </div>
 
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-40 hidden" id="add-category-modal">
-        <div class="bg-opacity-40 w-2xl mt-10 shadow-sm rounded-md" >
-            <div class="modal-title bg-slate-100 px-4 py-2 flex justify-center items-center rounded-t-md">
+    <div class="fixed inset-0 z-50 flex items-center justify-center hidden" id="add-category-modal">
+        <div class="absolute inset-0 bg-black opacity-60"></div>
+        <div class="modal relative w-2xl rounded-md">
+            <div class="modal-title bg-slate-100 px-4 py-2.5 flex justify-center items-center rounded-t-md">
                 <h2 class="text-xl font-semibold">Add New Category</h2>
             </div>
-            <div class="modal-content bg-white p-6 rounded-b">
+            <div class="modal-content bg-white p-6 rounded-b-md">
 
                 <form action="" method="post">
                     <div class="input mb-15">
@@ -95,7 +96,7 @@ $id = generateCategoryID();
 
 
                     <div class="action-button flex justify-end gap-2">
-                        <button type="submit" name="closeModal" class="px-4 py-2 bg-slate-500 text-white rounded hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-300 cursor-pointer">
+                        <button type="button" onclick="closeModal('add', 'category')" class="px-4 py-2 bg-slate-500 text-white rounded hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-300 cursor-pointer">
                             <i class="fa fa-close me-1.5"></i> Close
                         </button>
                         <button type="submit" name="saveCategory" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 cursor-pointer">
