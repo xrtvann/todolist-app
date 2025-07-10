@@ -1,6 +1,18 @@
 <?php
+// import necessary files
 require_once './../controller/categoryController.php';
+require_once './../utility/databaseUtility.php';
+
+// generate a unique ID for the new category
 $id = generateCategoryID();
+
+// fetch all categories from the database
+$categories = read("SELECT name, created_at FROM category ORDER BY created_at DESC");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveCategory'])) {
+    $result = store();
+}
+
 ?>
 <main class="p-6">
     <div class="flex justify-between items-start">
@@ -27,7 +39,7 @@ $id = generateCategoryID();
             </div>
 
             <div class="add-button">
-                <button class="flex items-center gap-2 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-300 cursor-pointer" onclick="showModal('add', 'category')">
+                <button class="flex items-center gap-2 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 cursor-pointer" onclick="showModal('add', 'category')">
                     <i class="fa fa-plus"></i>
                     <span>Add New</span>
                 </button>
@@ -44,10 +56,12 @@ $id = generateCategoryID();
                     </tr>
                 </thead>
                 <tbody class="table-row-group">
+                    <?php $i = 1; ?>
+                    <?php foreach($categories as $category) : ?>
                     <tr class="table-row border-b-1 border-slate-200">
-                        <td class="table-cell py-2 px-4">1</td>
-                        <td class="table-cell py-2 px-4">Work</td>
-                        <td class="table-cell py-2 px-4">2023-01-01</td>
+                        <td class="table-cell py-2 px-4"><?php echo $i++; ?></td>
+                        <td class="table-cell py-2 px-4"><?php echo $category['name']; ?></td>
+                        <td class="table-cell py-2 px-4"><?php echo $category['created_at']; ?></td>
                         <td class="table-cell py-2 px-4">
                             <div class="action-button flex gap-3">
                                 <a href="#" class="flex justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white"><i class="fas fa-edit"></i></a>
@@ -56,19 +70,7 @@ $id = generateCategoryID();
 
                         </td>
                     </tr>
-                    <tr class="table-row">
-                        <td class="table-cell py-2 px-4">1</td>
-                        <td class="table-cell py-2 px-4">Work</td>
-                        <td class="table-cell py-2 px-4">2023-01-01</td>
-                        <td class="table-cell py-2 px-4">
-                            <div class="action-button flex gap-3">
-                                <a href="#" class="flex justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white"><i class="fas fa-edit"></i></a>
-                                <a href="#" class="flex justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white"><i class="fas fa-trash"></i></a>
-                            </div>
-
-                        </td>
-                    </tr>
-
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

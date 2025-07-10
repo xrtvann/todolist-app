@@ -1,5 +1,6 @@
 <?php
 require_once '../config/database.php';
+require_once '../utility/databaseUtility.php';
 $connection = connectDatabase();
 
 // Function to generate a new category ID based on the last inserted ID
@@ -18,4 +19,23 @@ function generateCategoryID()
     }
 
     return 'CTRGY-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+}
+
+function store() {
+
+    global $connection;
+    if (isset($_POST['saveCategory'])) {
+       $id = htmlspecialchars($_POST['categoryID']);
+       $name = htmlspecialchars($_POST['categoryName']);
+
+       $data = [
+           'id' => $id,
+           'name' => $name
+       ];
+
+       insert('category', $data);
+
+       return mysqli_affected_rows($connection);
+           
+    }
 }
