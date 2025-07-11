@@ -39,6 +39,27 @@ function showModal(type, menu) {
   }
 }
 
+function showEditModal(entity, data = {} ){
+
+  showModal("update", entity);
+
+
+  
+
+  setTimeout(() => {
+    if (entity === "category") {
+      document.getElementById("updateCategoryID").value = data.id || "";
+      document.getElementById("updateCategoryName").value = data.name || "";
+    } 
+    
+    if (entity === "task") {
+      document.getElementById("updateTaskID").value = data.id || "";
+      document.getElementById("updateTaskName").value = data.name || "";
+      document.getElementById("updateTaskDescription").value = data.description || "";      
+    } 
+  }, 100);
+}
+
 function closeModal(type, menu) {
   const modalType = `${type}-${menu}-modal`;
   const modal = document.getElementById(modalType);

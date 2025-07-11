@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $id = generateCategoryID();
 
 // fetch all categories from the database
-$categories = read("SELECT name, created_at FROM category ORDER BY created_at DESC");
+$categories = read("SELECT * FROM category ORDER BY created_at DESC");
 ?>
 <main class="p-6">
     <div class="flex justify-between items-start">
@@ -64,12 +64,13 @@ $categories = read("SELECT name, created_at FROM category ORDER BY created_at DE
                         <td class="table-cell py-2 px-4"><?php echo $category['created_at']; ?></td>
                         <td class="table-cell py-2 px-4">
                             <div class="action-button flex gap-3">
-                                <button type="button" class="flex justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white"><i class="fas fa-edit"></i></button>
+                                <button type="button" onclick="showModal('update', 'category')" class="flex justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white"><i class="fas fa-edit"></i></button>
                                 <button type="button" onclick="showConfirmationDelete('category','<?= htmlspecialchars($category['name']) ?>')" class="flex justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white"><i class="fas fa-trash"></i></button>
                             </div>
 
                         </td>
                     </tr>
+   
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -110,5 +111,38 @@ $categories = read("SELECT name, created_at FROM category ORDER BY created_at DE
         </div>
     </div>
 
+    <div class="fixed inset-0 z-50 flex items-center justify-center hidden" id="update-category-modal">
+        <div class="absolute inset-0 bg-black opacity-60"></div>
+        <div class="modal relative w-2xl rounded-md">
+            <div class="modal-title bg-slate-100 px-4 py-2.5 flex justify-center items-center rounded-t-md">
+                <h2 class="text-xl font-semibold">Update Category</h2>
+            </div>
+            <div class="modal-content bg-white p-6 rounded-b-md">
+
+                <form action="" method="post">
+                    <div class="input mb-15">
+                        <div class="mb-4">
+                            <label for="updateCategoryID" class="block text-gray-700 text-sm font-semibold mb-2">ID</label>
+                            <input type="text" id="updateCategoryID" name="updateCategoryID" class="border border-gray-300 py-2 px-3 rounded focus:border-gray-500 focus:outline focus:outline-gray-50 w-full" required readonly value="<?php echo $id; ?>">
+                        </div>
+                        <div class="mb-4">
+                            <label for="updateCategoryName" class="block text-gray-700 text-sm font-semibold mb-2">Name</label>
+                            <input type="text" id="updateCategoryName" name="updateCategoryName" class="border border-gray-300 py-2 px-3 rounded focus:border-gray-500 focus:outline focus:outline-gray-50 w-full" required>
+                        </div>
+                    </div>
+
+
+                    <div class="action-button flex justify-end gap-2">
+                        <button type="button" onclick="closeModal('add', 'category')" class="px-4 py-2 bg-slate-500 text-white rounded hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-300 cursor-pointer">
+                            <i class="fa fa-close me-1.5"></i> Close
+                        </button>
+                        <button type="submit" onclick="showEditModal('category', { id: '<?php echo $id; ?>', name: '<?php echo $name; ?>' })" name="saveChangesCategory" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 cursor-pointer">
+                            <i class="fa fa-save me-1.5"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 </main>
