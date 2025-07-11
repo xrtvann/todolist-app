@@ -1,21 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once '../config/database.php';
 connectDatabase();
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
+
+// handle form subsmission
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+     if ($page === 'category' && isset($_POST['saveCategory'])) {
+        require_once '../controller/categoryController.php';
+        $result = store();
+        
+        if ($result > 0) {
+            $_SESSION['alert_type'] = 'success';
+            $_SESSION['alert_message'] = 'New category has been successfully added!';
+        } else {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = 'Failed to add new category!';
+        }
+        
+        // Redirect sebelum ada HTML output
+        header("Location: index.php?page=category");
+        exit();
+    }
+}
+
+
 $pageTitles = [
     'dashboard' => 'Dashboard',
     'tasks' => 'Tasks',
     'category' => 'Category',
     'report' => 'Report',
     'settings' => 'Settings',
-    'logout' => 'Logout',
 ];
 $title = isset($pageTitles[$page]) ? $pageTitles[$page] : 'Todolist App';
-?>
 
+$alertType = isset($_SESSION['alert_type']) ? $_SESSION['alert_type'] : '';
+$alertMessage = isset($_SESSION['alert_message']) ? $_SESSION['alert_message'] : '';
+
+if (!empty($alertType)) {
+   unset($_SESSION['alert_type'], $_SESSION['alert_message']);
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,17 +52,16 @@ $title = isset($pageTitles[$page]) ? $pageTitles[$page] : 'Todolist App';
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/96/000000/todo-list.png">
     <link rel="stylesheet" href="css/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../node_modules/sweetalert2/dist/sweetalert2.min.css">
 </head>
 
 <body class="font-poppins bg-gray-50">
     <div class="flex min-h-screen">
         <?php include('../views/templates/sidebar.php'); ?>
-
         <div id="mainContent" class="flex-1 flex flex-col h-screen">
             <div class="sticky top-0 bg-white shadow">
                 <?php include('../views/templates/navbar.php'); ?>
             </div>
-
             <div class="flex-1 overflow-auto">
                 <?php
                 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
@@ -46,13 +74,20 @@ $title = isset($pageTitles[$page]) ? $pageTitles[$page] : 'Todolist App';
                 }
                 ?>
             </div>
-
-
         </div>
     </div>
 
+   <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+   <script src="./js/alert.js"></script>
+   <script src="./js/app.js"></script>
 
-    <script src="js/app.js"></script>
+   <script>
+        <?php if(!empty($alertType) && !empty($alertMessage)): ?>
+                <?php if ($alertType === 'success'): ?>
+                    showSuccessAlert('Success', <?= json_encode($alertMessage) ?>);
+                <?php endif; ?>
+       <?php endif; ?>
+   </script>
 </body>
 
 </html>

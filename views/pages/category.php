@@ -3,16 +3,16 @@
 require_once './../controller/categoryController.php';
 require_once './../utility/databaseUtility.php';
 
+// check if session is not started, then start it
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // generate a unique ID for the new category
 $id = generateCategoryID();
 
 // fetch all categories from the database
 $categories = read("SELECT name, created_at FROM category ORDER BY created_at DESC");
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveCategory'])) {
-    $result = store();
-}
-
 ?>
 <main class="p-6">
     <div class="flex justify-between items-start">

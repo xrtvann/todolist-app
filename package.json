@@ -22,6 +22,7 @@
     "tailwindcss": "^4.1.11"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.7.2"
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "sweetalert2": "^11.22.2"
   }
 }
