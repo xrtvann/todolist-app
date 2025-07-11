@@ -39,3 +39,15 @@ function store() {
            
     }
 }
+
+function destroy($categoryName) {
+
+    $checkCategory = read("SELECT name FROM category WHERE name = '$categoryName'");
+
+    if ($checkCategory === 0) {
+        return false;
+    }
+
+    $result = delete('category', 'name', $categoryName);
+    return $result;
+}

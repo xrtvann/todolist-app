@@ -7,7 +7,7 @@ $connection = connectDatabase();
 function read($query) {
     global $connection;
 
-    $result = mysqli_query($connection, mysqli_real_escape_string($connection, $query));
+    $result = mysqli_query($connection, $query);
     if (!$result) {
         die("Query failed: " . mysqli_error($connection));
     }
@@ -40,3 +40,16 @@ function insert($table, $data) {
     return $result;
 }
 
+function delete($table, $field, $value) {
+    global $connection;
+
+    $escapedField = mysqli_real_escape_string($connection, $field);
+    $escapedValue = mysqli_real_escape_string($connection, $value);
+
+    $query = "DELETE FROM {$table} WHERE {$escapedField} = '{$escapedValue}'";
+    $result = mysqli_query($connection, $query);
+    if (!$result) {
+        die("Query failed: " . mysqli_error($connection));
+    }
+    return mysqli_affected_rows($connection);
+}

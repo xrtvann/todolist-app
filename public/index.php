@@ -9,7 +9,8 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 // handle form subsmission
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
      if ($page === 'category' && isset($_POST['saveCategory'])) {
-        require_once '../controller/categoryController.php';
+       
+        require_once '../controller/categoryController.php'; // 
         $result = store();
         
         if ($result > 0) {
@@ -25,6 +26,25 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         exit();
     }
 }
+
+// handle delete action
+if (isset($_GET['action']) && $_GET['action'] === 'delete') {
+    if (isset($_GET['categoryName'])) {
+        require_once '../controller/categoryController.php';
+        $categoryName = htmlspecialchars($_GET['categoryName']);
+        $result = destroy($categoryName);
+        if ($result > 0) {
+            $_SESSION['alert_type'] = 'success';
+            $_SESSION['alert_message'] = 'Category has been successfully deleted!';
+        } else {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = 'Failed to delete category!';
+        }
+        // Redirect sebelum ada HTML output
+        header("Location: index.php?page=category");
+        exit();
+    }
+} 
 
 
 $pageTitles = [

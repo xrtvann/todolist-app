@@ -64,8 +64,8 @@ $categories = read("SELECT name, created_at FROM category ORDER BY created_at DE
                         <td class="table-cell py-2 px-4"><?php echo $category['created_at']; ?></td>
                         <td class="table-cell py-2 px-4">
                             <div class="action-button flex gap-3">
-                                <a href="#" class="flex justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white"><i class="fas fa-edit"></i></a>
-                                <a href="#" class="flex justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white"><i class="fas fa-trash"></i></a>
+                                <button type="button" class="flex justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white"><i class="fas fa-edit"></i></button>
+                                <button type="button" onclick="showConfirmationDelete('category','<?= htmlspecialchars($category['name']) ?>')" class="flex justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white"><i class="fas fa-trash"></i></button>
                             </div>
 
                         </td>
