@@ -43,9 +43,6 @@ function showEditModal(entity, data = {} ){
 
   showModal("update", entity);
 
-
-  
-
   setTimeout(() => {
     if (entity === "category") {
       document.getElementById("updateCategoryID").value = data.id || "";
@@ -63,7 +60,10 @@ function showEditModal(entity, data = {} ){
 function closeModal(type, menu) {
   const modalType = `${type}-${menu}-modal`;
   const modal = document.getElementById(modalType);
+
+  
   if (modal) {
+    console.log(modal);
     modal.classList.add("hidden");
   }
 }
