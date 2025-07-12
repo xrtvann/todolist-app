@@ -40,6 +40,40 @@ function store() {
     }
 }
 
+function update() {
+
+    global $connection;
+
+    if (isset($_POST['saveChangesCategory'])) {
+    
+        
+        $categoryID = htmlspecialchars($_POST['updateCategoryID']);
+        $newCategoryName = htmlspecialchars($_POST['updateCategoryName']);
+      
+        if (empty($categoryID) || empty($newCategoryName)) {
+           return 0;
+        }
+
+        $checkQuery = "SELECT id FROM category WHERE name = '{$newCategoryName}' AND id != '{$categoryID}'";
+        $checkExisting = read($checkQuery);
+
+        if (!empty($checkExisting)) {
+            return -1;
+        }
+
+        $data = [
+            'name' => $newCategoryName
+        ];
+
+        $condition = "id = '{$categoryID}'";
+
+        $result = edit('category', $data, $condition);
+        
+        return $result;
+    }
+   return 0;
+}
+
 function destroy($categoryName) {
 
     $checkCategory = read("SELECT name FROM category WHERE name = '$categoryName'");

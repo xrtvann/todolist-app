@@ -13,8 +13,6 @@ $newID = generateCategoryID();
 
 // fetch all categories from the database
 $categories = read("SELECT * FROM category ORDER BY created_at DESC");
-// convert categories to JSON format for use in JavaScript
-$categoriesJSON = json_encode($categories, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>
 <main class="p-6">
     <div class="flex justify-between items-start">
@@ -141,7 +139,7 @@ $categoriesJSON = json_encode($categories, JSON_UNESCAPED_UNICODE | JSON_UNESCAP
                         <button type="button" onclick="closeModal('update', 'category')" class="px-4 py-2 bg-slate-500 text-white rounded hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-300 cursor-pointer">
                             <i class="fa fa-close me-1.5"></i> Close
                         </button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 cursor-pointer">
+                        <button type="submit" name="saveChangesCategory" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 cursor-pointer">
                             <i class="fa fa-save me-1.5"></i> Save Changes
                         </button>
                     </div>
@@ -150,5 +148,4 @@ $categoriesJSON = json_encode($categories, JSON_UNESCAPED_UNICODE | JSON_UNESCAP
         </div>
     </div>
 
-    <div id="categories-data" data-categories='<?php echo htmlspecialchars($categoriesJSON, ENT_QUOTES); ?>'></div>
 </main>

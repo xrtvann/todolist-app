@@ -47,13 +47,7 @@ function showEditModal(entity, data = {} ){
     if (entity === "category") {
       document.getElementById("updateCategoryID").value = data.id || "";
       document.getElementById("updateCategoryName").value = data.name || "";
-    } 
-    
-    if (entity === "task") {
-      document.getElementById("updateTaskID").value = data.id || "";
-      document.getElementById("updateTaskName").value = data.name || "";
-      document.getElementById("updateTaskDescription").value = data.description || "";      
-    } 
+    }
   }, 100);
 }
 

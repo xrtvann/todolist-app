@@ -25,6 +25,23 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         header("Location: index.php?page=category");
         exit();
     }
+
+    if ($page === 'category' && isset($_POST['saveChangesCategory'])) {
+        require_once '../controller/categoryController.php';
+        $result = update();
+        
+        if ($result > 0) {
+            $_SESSION['alert_type'] = 'success';
+            $_SESSION['alert_message'] = 'Category has been successfully updated!';
+        } else {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = 'Failed to update category!';
+        }
+        
+        // Redirect sebelum ada HTML output
+        header("Location: index.php?page=category");
+        exit();
+    }
 }
 
 // handle delete action

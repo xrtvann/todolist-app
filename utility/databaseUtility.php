@@ -40,6 +40,25 @@ function insert($table, $data) {
     return $result;
 }
 
+function edit($table, $data, $condition) {
+    global $connection;
+    
+    $setParts = [];
+    foreach($data as $column => $value) {
+        $escapedColumn = mysqli_real_escape_string($connection, $column);
+        $escapedValue = mysqli_real_escape_string($connection, $value);
+        $setParts[] = "{$escapedColumn} = '{$escapedValue}'";
+    }
+
+    $set = implode(', ', $setParts);
+    $query = "UPDATE {$table} SET {$set} WHERE {$condition}";
+    $result = mysqli_query($connection, $query);
+    if (!$result) {
+        die("Query failed: " . mysqli_error($connection));
+    }
+    return mysqli_affected_rows($connection);
+}
+
 function delete($table, $field, $value) {
     global $connection;
 
