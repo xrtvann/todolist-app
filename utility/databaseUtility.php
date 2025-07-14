@@ -72,3 +72,16 @@ function delete($table, $field, $value) {
     }
     return mysqli_affected_rows($connection);
 }
+
+function pagination($table) {
+    global $connection;
+
+    $query = "SELECT COUNT(*) as total FROM {$table}";
+    $result = read($query);
+    if (empty($result)) {
+        return 0; // Tidak ada data 
+    }
+
+    $total = $result[0]['total'];
+    return $total;
+}

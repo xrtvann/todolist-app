@@ -9,7 +9,7 @@ function generateCategoryID()
     global $connection;
     $query = "SELECT id FROM category ORDER BY id DESC LIMIT 1";
     $result = mysqli_query($connection, $query);
-    $lastID =  mysqli_fetch_assoc($result);
+    $lastID = mysqli_fetch_assoc($result);
 
     if ($lastID) {
         $lastNumber = (int) substr($lastID['id'], 6);
@@ -21,37 +21,86 @@ function generateCategoryID()
     return 'CTRGY-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 }
 
-function store() {
+function showWithPagination($dataPerPage = 10, $currentPage = 1)
+{
+    global $connection;
+
+    $currentPage = max(1, (int)$currentPage); 
+
+    $totalRows = pagination('category');
+
+    if ($totalRows === 0) {
+        return [
+            'categories' => [],
+            'pagination' => [
+                'total' => 0,
+                'currentPage' => $currentPage,
+                'totalPages' => 0,
+                'dataPerPage' => $dataPerPage
+            ]
+        ];
+    }
+
+    $totalPages = ceil($totalRows / $dataPerPage);
+    $currentPage = min($currentPage, $totalPages);
+    $offset = ((int) $currentPage - 1) * $dataPerPage;
+
+
+    $query = "SELECT * FROM category ORDER BY created_at DESC LIMIT {$dataPerPage} OFFSET {$offset}";
+    $categories = read($query);
+
+    return [
+        'categories' => $categories,
+        'pagination' => [
+            'total' => $totalRows,
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+            'dataPerPage' => $dataPerPage
+        ]
+    ];
+
+}
+
+function show()
+{
+    $query = "SELECT * FROM category ORDER BY created_at DESC";
+    $categories = read($query);
+    return $categories;
+}
+
+function store()
+{
 
     global $connection;
     if (isset($_POST['saveCategory'])) {
-       $id = htmlspecialchars($_POST['categoryID']);
-       $name = htmlspecialchars($_POST['categoryName']);
+        $id = htmlspecialchars($_POST['categoryID']);
+        $name = htmlspecialchars($_POST['categoryName']);
 
-       $data = [
-           'id' => $id,
-           'name' => $name
-       ];
+        $data = [
+            'id' => $id,
+            'name' => $name
+        ];
 
-       insert('category', $data);
+        insert('category', $data);
 
-       return mysqli_affected_rows($connection);
-           
+        return mysqli_affected_rows($connection);
+
     }
 }
 
-function update() {
+function update()
+{
 
     global $connection;
 
     if (isset($_POST['saveChangesCategory'])) {
-    
-        
+
+
         $categoryID = htmlspecialchars($_POST['updateCategoryID']);
         $newCategoryName = htmlspecialchars($_POST['updateCategoryName']);
-      
+
         if (empty($categoryID) || empty($newCategoryName)) {
-           return 0;
+            return 0;
         }
 
         $checkQuery = "SELECT id FROM category WHERE name = '{$newCategoryName}' AND id != '{$categoryID}'";
@@ -68,13 +117,14 @@ function update() {
         $condition = "id = '{$categoryID}'";
 
         $result = edit('category', $data, $condition);
-        
+
         return $result;
     }
-   return 0;
+    return 0;
 }
 
-function destroy($categoryName) {
+function destroy($categoryName)
+{
 
     $checkCategory = read("SELECT name FROM category WHERE name = '$categoryName'");
 
@@ -85,3 +135,4 @@ function destroy($categoryName) {
     $result = delete('category', 'name', $categoryName);
     return $result;
 }
+
