@@ -7,12 +7,12 @@ connectDatabase();
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
 // handle form subsmission
-if($_SERVER['REQUEST_METHOD'] === 'POST'){
-     if ($page === 'category' && isset($_POST['saveCategory'])) {
-       
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($page === 'category' && isset($_POST['saveCategory'])) {
+
         require_once '../controller/categoryController.php'; // 
         $result = store();
-        
+
         if ($result > 0) {
             $_SESSION['alert_type'] = 'success';
             $_SESSION['alert_message'] = 'New category has been successfully added!';
@@ -20,7 +20,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $_SESSION['alert_type'] = 'error';
             $_SESSION['alert_message'] = 'Failed to add new category!';
         }
-        
+
         // Redirect sebelum ada HTML output
         header("Location: index.php?page=category");
         exit();
@@ -29,7 +29,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     if ($page === 'category' && isset($_POST['saveChangesCategory'])) {
         require_once '../controller/categoryController.php';
         $result = update();
-        
+
         if ($result > 0) {
             $_SESSION['alert_type'] = 'success';
             $_SESSION['alert_message'] = 'Category has been successfully updated!';
@@ -37,7 +37,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $_SESSION['alert_type'] = 'error';
             $_SESSION['alert_message'] = 'Failed to update category!';
         }
-        
+
         // Redirect sebelum ada HTML output
         header("Location: index.php?page=category");
         exit();
@@ -61,7 +61,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete') {
         header("Location: index.php?page=category");
         exit();
     }
-} 
+}
 
 
 $pageTitles = [
@@ -77,11 +77,12 @@ $alertType = isset($_SESSION['alert_type']) ? $_SESSION['alert_type'] : '';
 $alertMessage = isset($_SESSION['alert_message']) ? $_SESSION['alert_message'] : '';
 
 if (!empty($alertType)) {
-   unset($_SESSION['alert_type'], $_SESSION['alert_message']);
+    unset($_SESSION['alert_type'], $_SESSION['alert_message']);
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -90,6 +91,7 @@ if (!empty($alertType)) {
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/96/000000/todo-list.png">
     <link rel="stylesheet" href="css/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../node_modules/sweetalert2/dist/sweetalert2.min.css">
+    <script src="./js/jquery.js"></script>
 </head>
 
 <body class="font-poppins bg-gray-50">
@@ -114,17 +116,17 @@ if (!empty($alertType)) {
         </div>
     </div>
 
-   <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
-   <script src="./js/alert.js"></script>
-   <script src="./js/app.js"></script>
+    <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="./js/alert.js"></script>
+    <script src="./js/app.js"></script>
 
-   <script>
-        <?php if(!empty($alertType) && !empty($alertMessage)): ?>
-                <?php if ($alertType === 'success'): ?>
-                    showSuccessAlert('Success', <?= json_encode($alertMessage) ?>);
-                <?php endif; ?>
-       <?php endif; ?>
-   </script>
+    <script>
+        <?php if (!empty($alertType) && !empty($alertMessage)): ?>
+            <?php if ($alertType === 'success'): ?>
+                showSuccessAlert('Success', <?= json_encode($alertMessage) ?>);
+            <?php endif; ?>
+        <?php endif; ?>
+    </script>
 </body>
 
 </html>

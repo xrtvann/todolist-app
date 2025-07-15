@@ -21,49 +21,11 @@ function generateCategoryID()
     return 'CTRGY-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 }
 
-function showWithPagination($dataPerPage = 10, $currentPage = 1)
+
+
+function show($limit = null, $offset = null)
 {
-    global $connection;
-
-    $currentPage = max(1, (int)$currentPage); 
-
-    $totalRows = pagination('category');
-
-    if ($totalRows === 0) {
-        return [
-            'categories' => [],
-            'pagination' => [
-                'total' => 0,
-                'currentPage' => $currentPage,
-                'totalPages' => 0,
-                'dataPerPage' => $dataPerPage
-            ]
-        ];
-    }
-
-    $totalPages = ceil($totalRows / $dataPerPage);
-    $currentPage = min($currentPage, $totalPages);
-    $offset = ((int) $currentPage - 1) * $dataPerPage;
-
-
-    $query = "SELECT * FROM category ORDER BY created_at DESC LIMIT {$dataPerPage} OFFSET {$offset}";
-    $categories = read($query);
-
-    return [
-        'categories' => $categories,
-        'pagination' => [
-            'total' => $totalRows,
-            'currentPage' => $currentPage,
-            'totalPages' => $totalPages,
-            'dataPerPage' => $dataPerPage
-        ]
-    ];
-
-}
-
-function show()
-{
-    $query = "SELECT * FROM category ORDER BY created_at DESC";
+    $query = "SELECT * FROM category ORDER BY created_at DESC LIMIT $limit, $offset ";
     $categories = read($query);
     return $categories;
 }

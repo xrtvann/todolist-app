@@ -11,13 +11,14 @@ if (session_status() === PHP_SESSION_NONE) {
 // generate a unique ID for the new category
 $newID = generateCategoryID();
 // fetch categories with pagination
-$dataPerPage = 10;
-$currentPage = isset($_GET['p']) ? (int) $_GET['p'] : 1;
-$currentPage = max(1, $currentPage); // Ensure current page is at least 1
+$pagination = pagination('category', 10);
+$start = $pagination['start'];
+$currentPage = $pagination['currentPage'];
+$amountOfPage = $pagination['amountOfPage'];
+$amountOfData = $pagination['amountOfData'];
+$dataPerPage = $pagination['dataPerPage'];
+$categories = show($start, $dataPerPage);
 
-$result = showWithPagination($dataPerPage, $currentPage);
-$categories = $result['categories'];
-$pagination = $result['pagination'];
 ?>
 <main class="p-6">
     <div class="flex justify-between items-start">
@@ -54,7 +55,7 @@ $pagination = $result['pagination'];
                 </button>
             </div>
         </div>
-        <div class="table-content">
+        <div class="table-content" id="table-container">
 
             <div class="max-h-96 overflow-auto border border-gray-200 rounded-sm shadow-sm">
                 <table class="w-full">
@@ -79,7 +80,7 @@ $pagination = $result['pagination'];
                                 <?php
                                 $createdAt = new DateTime($category['created_at']);
                                 $createdAtFormatted = $createdAt->format('d M Y H:i');
-                                    ?>
+                                ?>
                                 <td class="table-cell py-2 px-4"><?php echo $i++; ?></td>
                                 <td class="table-cell py-2 px-4"><?php echo $category['name']; ?></td>
                                 <td class="table-cell py-2 px-4"><?php echo $createdAtFormatted; ?></td>
@@ -109,93 +110,59 @@ $pagination = $result['pagination'];
                 <!-- Info pagination -->
                 <?php
                 $startRecord = ($pagination['currentPage'] - 1) * $pagination['dataPerPage'] + 1;
-                $endRecord = min($pagination['currentPage'] * $pagination['dataPerPage'], $pagination['total']);
+                $endRecord = min($pagination['currentPage'] * $pagination['dataPerPage'], $pagination['amountOfData']);
                 ?>
                 <div class="pagination-info text-sm text-gray-700">
                     Showing <span class="font-medium"><?= $startRecord ?></span> to <span
                         class="font-medium"><?= $endRecord ?></span> of <span
-                        class="font-medium"><?= $pagination['total'] ?></span> results
+                        class="font-medium"><?= $pagination['amountOfData'] ?></span> results
                 </div>
 
                 <!-- ✅ Pagination controls -->
                 <div class="pagination-controls flex items-center space-x-2">
                     <!-- ✅ Previous button -->
-                    <?php if ($pagination['currentPage'] > 1): ?>
-                        <a href="?page=category&p=<?= $pagination['currentPage'] - 1 ?>"
-                            class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                            <i class="fas fa-chevron-left mr-2"></i>
-                            Previous
-                        </a>
-                    <?php else: ?>
-                        <span
-                            class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-300 rounded-md cursor-not-allowed">
-                            <i class="fas fa-chevron-left mr-2"></i>
-                            Previous
-                        </span>
-                    <?php endif; ?>
+
+                    <a <?= ($currentPage == 1) ? 'disabled' : '' ?>
+                        href="?page=category&p=<?= previousButton($currentPage) ?>"
+                        class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Previous
+                    </a>
 
                     <!-- ✅ Page numbers -->
                     <div class="pagination-numbers flex items-center space-x-1">
-                        <?php
-                        $totalPages = $pagination['totalPages'];
-                        $currentPage = $pagination['currentPage'];
 
-                        // Logic untuk menampilkan nomor halaman
-                        $startPage = max(1, $currentPage - 2);
-                        $endPage = min($totalPages, $currentPage + 2);
 
-                        // Tampilkan halaman pertama jika tidak termasuk range
-                        if ($startPage > 1): ?>
-                            <a href="?page=category&p=1"
-                                class="pagination-number px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                                1
-                            </a>
-                            <?php if ($startPage > 2): ?>
-                                <span class="px-2 py-2 text-sm text-gray-500">...</span>
-                            <?php endif;
-                        endif;
 
-                        // Tampilkan range halaman
-                        for ($i = $startPage; $i <= $endPage; $i++): ?>
+
+
+
+                        <?php for ($i = 1; $i <= $amountOfPage; $i++): ?>
                             <?php if ($i == $currentPage): ?>
-                                <span
-                                    class="pagination-number px-3 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded-md">
+                                <a href="?page=category&p=<?= $i ?>"
+                                    class="pagination-number px-3 py-2 text-sm font-medium text-white bg-green-600 border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
                                     <?= $i ?>
-                                </span>
+                                </a>
                             <?php else: ?>
                                 <a href="?page=category&p=<?= $i ?>"
                                     class="pagination-number px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
                                     <?= $i ?>
                                 </a>
-                            <?php endif;
-                        endfor;
-
-                        // Tampilkan halaman terakhir jika tidak termasuk range
-                        if ($endPage < $totalPages): ?>
-                            <?php if ($endPage < $totalPages - 1): ?>
-                                <span class="px-2 py-2 text-sm text-gray-500">...</span>
                             <?php endif; ?>
-                            <a href="?page=category&p=<?= $totalPages ?>"
-                                class="pagination-number px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                                <?= $totalPages ?>
-                            </a>
-                        <?php endif; ?>
+                        <?php endfor; ?>
+
+
+
                     </div>
 
                     <!-- ✅ Next button -->
-                    <?php if ($pagination['currentPage'] < $pagination['totalPages']): ?>
-                        <a href="?page=category&p=<?= $pagination['currentPage'] + 1 ?>"
-                            class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                            Next
-                            <i class="fas fa-chevron-right ml-2"></i>
-                        </a>
-                    <?php else: ?>
-                        <span
-                            class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-300 rounded-md cursor-not-allowed">
-                            Next
-                            <i class="fas fa-chevron-right ml-2"></i>
-                        </span>
-                    <?php endif; ?>
+
+                    <a <?= ($currentPage === $amountOfPage) ? 'disabled' : '' ?>
+                        href="?page=category&p=<?= nextButton($currentPage, $amountOfPage) ?>"
+                        class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                        Next
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </a>
                 </div>
             </div>
         </div>
