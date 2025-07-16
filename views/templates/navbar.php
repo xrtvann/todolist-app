@@ -17,7 +17,7 @@
         </div>
     </nav>
 
-    <div class="dropdown-menu bg-white w-42 absolute right-4 top-20 border-1 border-gray-300 rounded-sm hidden" id="userMenuDropdown">
+    <div class="dropdown-menu bg-white w-42 absolute right-4 z-[1000px] top-20 border-1 border-gray-300 rounded-sm hidden" id="userMenuDropdown">
         <ul class="flex flex-col space-y-1 mt-2 ml-2">
             <li><a href="#" class="block p-2 text-sm font-semibold text-gray-700 hover:text-primary"><i class="fa fa-user mr-2 w-4"></i>Profile</a></li>
             <li><a href="#" class="block p-2 text-sm font-semibold text-gray-700 hover:text-primary"><i class="fa fa-gear mr-2 w-4"></i>Settings</a></li>

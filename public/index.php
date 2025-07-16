@@ -91,6 +91,8 @@ if (!empty($alertType)) {
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/96/000000/todo-list.png">
     <link rel="stylesheet" href="css/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../node_modules/sweetalert2/dist/sweetalert2.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="./js/jquery.js"></script>
 </head>
 
@@ -117,6 +119,7 @@ if (!empty($alertType)) {
     </div>
 
     <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+
     <script src="./js/alert.js"></script>
     <script src="./js/app.js"></script>
 

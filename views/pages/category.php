@@ -34,7 +34,7 @@ $categories = show($start, $dataPerPage);
                 <form action="" method="post" class="relative">
                     <!-- Search input -->
                     <i class="fa fa-search absolute text-gray-400 top-2 left-2"></i>
-                    <input type="text" placeholder="Search"
+                    <input id="searchInputCategory" name="searchInputCategory" type="text" placeholder="Search"
                         class="border border-gray-300 py-1 px-8 rounded focus:border-gray-500 focus:outline focus:outline-gray-50">
                 </form>
 
@@ -121,13 +121,21 @@ $categories = show($start, $dataPerPage);
                 <!-- ✅ Pagination controls -->
                 <div class="pagination-controls flex items-center space-x-2">
                     <!-- ✅ Previous button -->
-
-                    <a <?= ($currentPage == 1) ? 'disabled' : '' ?>
+                    <?php if($currentPage == 1): ?>
+                    <a
+                       
+                        class="pagination-btn flex items-center px-3 py-2 text-sm font-medium cursor-not-allowed text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Previous
+                    </a>
+                    <?php else: ?>
+                    <a
                         href="?page=category&p=<?= previousButton($currentPage) ?>"
                         class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
                         <i class="fas fa-chevron-left mr-2"></i>
                         Previous
                     </a>
+                    <?php endif; ?>
 
                     <!-- ✅ Page numbers -->
                     <div class="pagination-numbers flex items-center space-x-1">
@@ -156,13 +164,21 @@ $categories = show($start, $dataPerPage);
                     </div>
 
                     <!-- ✅ Next button -->
-
-                    <a <?= ($currentPage === $amountOfPage) ? 'disabled' : '' ?>
+                    <?php if($currentPage == $amountOfPage): ?>
+                    <a 
+                        
+                        class="pagination-btn flex items-center px-3 py-2 text-sm font-medium cursor-not-allowed text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                        Next
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </a>
+                    <?php else: ?>
+                    <a 
                         href="?page=category&p=<?= nextButton($currentPage, $amountOfPage) ?>"
                         class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
                         Next
                         <i class="fas fa-chevron-right ml-2"></i>
                     </a>
+                   <?php endif; ?>
                 </div>
             </div>
         </div>

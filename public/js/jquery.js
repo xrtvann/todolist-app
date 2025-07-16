@@ -1,5 +1,7 @@
 $(document).ready(function () {
-    $('#searchInput').on('keyup', function () {
-        $('#table-container').load();
-    })
-})
+  $("#searchInputCategory").on("keyup", function () {
+    $("#table-container").load(
+      "../ajax/liveSearch.php?keyword=" + $("#searchInputCategory").val()
+    );
+  });
+});

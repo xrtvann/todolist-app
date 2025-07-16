@@ -98,3 +98,52 @@ function destroy($categoryName)
     return $result;
 }
 
+function searchCategories($searchTerm, $dataPerPage = 10, $currentPage = 1)
+{
+    global $connection;
+
+    // ✅ VALIDATE: Input parameters
+    $searchTerm = trim($searchTerm);
+    $dataPerPage = max(1, (int) $dataPerPage);
+    $currentPage = max(1, (int) $currentPage);
+
+    // ✅ ESCAPE: Search term untuk mencegah SQL injection
+    $escapedSearchTerm = mysqli_real_escape_string($connection, $searchTerm);
+
+    // ✅ BUILD: Search query dengan multiple columns
+    $searchCondition = "name LIKE '%{$escapedSearchTerm}%' OR id LIKE '%{$escapedSearchTerm}%'";
+
+    // ✅ COUNT: Total rows yang match dengan search
+    $countQuery = "SELECT COUNT(*) as total FROM category WHERE {$searchCondition}";
+    $countResult = read($countQuery);
+    $totalRows = (int) $countResult[0]['total'];
+
+    // ✅ CALCULATE: Pagination data
+    $totalPages = ceil($totalRows / $dataPerPage);
+    $currentPage = min($currentPage, max(1, $totalPages)); // Ensure valid page
+    $offset = ($currentPage - 1) * $dataPerPage;
+
+    // ✅ QUERY: Get search results dengan pagination
+    $dataQuery = "SELECT * FROM category 
+                  WHERE {$searchCondition} 
+                  ORDER BY created_at DESC 
+                  LIMIT {$dataPerPage} OFFSET {$offset}";
+
+    $categories = read($dataQuery);
+
+    // ✅ RETURN: Structured data sama seperti showWithPagination
+    return [
+        'categories' => $categories,
+        'pagination' => [
+            'totalRows' => $totalRows,
+            'totalPages' => $totalPages,
+            'currentPage' => $currentPage,
+            'offset' => $offset,
+            'dataPerPage' => $dataPerPage,
+            'amountOfData' => $totalRows, // Untuk compatibility dengan existing code
+            'amountOfPage' => $totalPages
+        ],
+        'searchTerm' => $searchTerm
+    ];
+}
+
