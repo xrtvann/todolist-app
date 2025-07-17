@@ -44,6 +44,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    if ($page === 'task' && isset($_POST['markAsDone'])) {
+        require_once '../controller/taskController.php';
+        $result = markDoneTask();
+
+        if ($result > 0) {
+            $_SESSION['alert_type'] = 'success';
+            $_SESSION['alert_message'] = 'Task has been successfully marked as done!';
+        } else {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = 'Failed to mark task as done!';
+        }
+
+        // Redirect sebelum ada HTML output
+        header("Location: index.php?page=task");
+        exit();
+    }
+
     if ($page === 'category' && isset($_POST['saveChangesCategory'])) {
         require_once '../controller/categoryController.php';
         $result = update();

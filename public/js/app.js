@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   selectTaskCategory();
 });
 
+
 function toggleUserMenu() {
   const userMenuDropdown = document.getElementById("userMenuDropdown");
   userMenuDropdown.classList.toggle("hidden");

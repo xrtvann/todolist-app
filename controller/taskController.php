@@ -84,6 +84,25 @@ function update()
     return 0;
 }
 
+function markDoneTask()
+{
+    global $connection;
+    $taskId = htmlspecialchars($_POST['doneTaskID']);
+    if (empty($taskId)) {
+        return 0;
+    }
+
+    $escapedTaskId = mysqli_real_escape_string($connection, $taskId);
+    $query = "UPDATE task SET status='done' WHERE id='{$escapedTaskId}'";
+    $result = mysqli_query($connection, $query);
+
+    if (!$result) {
+        return 0; // Gagal update
+    }
+
+    return mysqli_affected_rows($connection); // Berhasil update
+}
+
 function destroy($categoryName)
 {
 

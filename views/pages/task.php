@@ -108,14 +108,23 @@ $categories = $result;
                                 <td class="table-cell py-2 px-4"><?php echo $createdAtFormatted; ?></td>
                                 <td class="table-cell py-2 px-4">
                                     <div class="action-button flex gap-3">
+                                        <form action="" method="post" style="display:inline;">
+                                            <input type="hidden" name="doneTaskID"
+                                                value="<?= htmlspecialchars($task['id']) ?>">
+                                            <button type="submit" name="markAsDone"
+                                                class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-green-500 border border-green-500 hover:bg-green-500 hover:text-white transition-colors duration-200"
+                                                title="Mark as Done">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
                                         <button type="button"
                                             onclick="showEditModal('task', {id: '<?= htmlspecialchars($task['id']) ?>', name: '<?= htmlspecialchars($task['name']) ?>'})"
-                                            class="flex justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white transition-colors duration-200">
+                                            class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white transition-colors duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button type="button"
                                             onclick="showConfirmationDelete('task','<?= htmlspecialchars($task['name']) ?>')"
-                                            class="flex justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200">
+                                            class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
