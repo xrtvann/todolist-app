@@ -1,24 +1,22 @@
 <?php
-// filepath: d:\laragon\www\todolist-app\public\ajax\category.php
+
+require_once "../../config/database.php";
 require_once "../../utility/databaseUtility.php";
 require_once "../../controller/categoryController.php";
-
-// Connect to database
-connectDatabase();
-
 // Get search parameter
 $searchInput = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
 $page = isset($_GET['page']) ? $_GET['page'] : 'category';
+$currentPage = isset($_GET['p']) ? (int)$_GET['p'] : 1;
 
+$dataPerPage = 10; // Default items per page
 // Handle category search
 if ($page === 'category') {
     if (empty($searchInput)) {
-        // If search is empty, show recent categories
-        $result = show(20, 0);
-        $categories = $result['categories'];
+        $pagination = pagination('category', $dataPerPage);
+        $categories = show($pagination['start'], $dataPerPage);
     } else {
         // Search categories
-        $result = searchCategories($searchInput, 50, 1);
+        $result = searchCategories($searchInput, $dataPerPage, $currentPage);
         $categories = $result['categories'];
     }
 

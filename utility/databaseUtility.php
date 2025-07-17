@@ -1,9 +1,7 @@
 <?php
 
-require_once '../config/database.php';
-$connection = connectDatabase();
+require_once __DIR__ . '/../config/database.php';
 
-// Function fetching all data from the database
 function read($query)
 {
     global $connection;

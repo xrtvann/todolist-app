@@ -1,6 +1,6 @@
 <?php
-require_once '../config/database.php';
-require_once '../utility/databaseUtility.php';
+
+require_once __DIR__ . '/../utility/databaseUtility.php';
 $connection = connectDatabase();
 
 // Function to generate a new category ID based on the last inserted ID
@@ -23,9 +23,9 @@ function generateCategoryID()
 
 
 
-function show($limit = null, $offset = null)
+function show($limit = 10, $offset = 0)
 {
-    $query = "SELECT * FROM category ORDER BY created_at DESC LIMIT $limit, $offset ";
+    $query = "SELECT * FROM category ORDER BY created_at DESC LIMIT $limit, $offset";
     $categories = read($query);
     return $categories;
 }
@@ -112,6 +112,7 @@ function searchCategories($searchTerm, $dataPerPage = 10, $currentPage = 1)
 
     // ✅ BUILD: Search query dengan multiple columns
     $searchCondition = "name LIKE '%{$escapedSearchTerm}%' OR id LIKE '%{$escapedSearchTerm}%'";
+    var_dump($searchCondition); // Debugging line to check the search condition
 
     // ✅ COUNT: Total rows yang match dengan search
     $countQuery = "SELECT COUNT(*) as total FROM category WHERE {$searchCondition}";
@@ -146,4 +147,3 @@ function searchCategories($searchTerm, $dataPerPage = 10, $currentPage = 1)
         'searchTerm' => $searchTerm
     ];
 }
-
