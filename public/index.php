@@ -26,6 +26,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    if ($page === 'task' && isset($_POST['saveTask'])) {
+
+        require_once '../controller/taskController.php'; // 
+        $result = store();
+
+        if ($result > 0) {
+            $_SESSION['alert_type'] = 'success';
+            $_SESSION['alert_message'] = 'New task has been successfully added!';
+        } else {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = 'Failed to add new task!';
+        }
+
+        // Redirect sebelum ada HTML output
+        header("Location: index.php?page=task");
+        exit();
+    }
+
     if ($page === 'category' && isset($_POST['saveChangesCategory'])) {
         require_once '../controller/categoryController.php';
         $result = update();
@@ -66,7 +84,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete') {
 
 $pageTitles = [
     'dashboard' => 'Dashboard',
-    'tasks' => 'Tasks',
+    'task' => 'Task',
     'category' => 'Category',
     'report' => 'Report',
     'settings' => 'Settings',
@@ -106,7 +124,7 @@ if (!empty($alertType)) {
             <div class="flex-1 overflow-auto">
                 <?php
                 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
-                $allowed_pages = ['dashboard', 'tasks', 'category', 'report', 'settings', 'logout'];
+                $allowed_pages = ['dashboard', 'task', 'category', 'report', 'settings', 'logout'];
 
                 if (in_array($page, $allowed_pages)) {
                     include("../views/pages/" . $page . ".php");

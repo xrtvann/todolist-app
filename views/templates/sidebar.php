@@ -14,7 +14,7 @@
                 </a>
             </li>
             <li>
-                <a href="?page=tasks" class="flex items-center px-4 py-2 rounded hover:bg-primary  hover:text-white text-gray-700 font-medium <?php echo ($currentPage == 'tasks') ? 'bg-primary text-white' : ''; ?>">
+                <a href="?page=task" class="flex items-center px-4 py-2 rounded hover:bg-primary  hover:text-white text-gray-700 font-medium <?php echo ($currentPage == 'task') ? 'bg-primary text-white' : ''; ?>">
                     <div class="icon w-6 text-center"><i class="fa-solid fa-clipboard-list"></i></div>
                     <span class="sidebar-text ml-4">Tasks</span>
                 </a>

@@ -2,12 +2,10 @@
 
 require_once __DIR__ . '/../utility/databaseUtility.php';
 $connection = connectDatabase();
-
-// Function to generate a new category ID based on the last inserted ID
 function generateCategoryID()
 {
     global $connection;
-    $query = "SELECT id FROM category ORDER BY id DESC LIMIT 1";
+    $query = "SELECT id FROM task ORDER BY id DESC LIMIT 1";
     $result = mysqli_query($connection, $query);
     $lastID = mysqli_fetch_assoc($result);
 
@@ -18,32 +16,33 @@ function generateCategoryID()
         $newNumber = 1;
     }
 
-    return 'CTRGY-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    return 'TSK-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 }
-
 
 
 function show($limit = 10, $offset = 0)
 {
-    $query = "SELECT * FROM category ORDER BY created_at DESC LIMIT $limit, $offset";
-    $categories = read($query);
-    return $categories;
+    $query = "SELECT task.*, category.name AS category_name FROM task INNER JOIN category ON task.category_id = category.id ORDER BY task.created_at DESC LIMIT $limit, $offset";
+    $tasks = read($query);
+    return $tasks;
 }
 
 function store()
 {
 
     global $connection;
-    if (isset($_POST['saveCategory'])) {
-        $id = htmlspecialchars($_POST['categoryID']);
-        $name = htmlspecialchars($_POST['categoryName']);
+    if (isset($_POST['saveTask'])) {
+        $id = htmlspecialchars($_POST['TaskID']);
+        $name = htmlspecialchars($_POST['TaskName']);
+        $taskCategory = htmlspecialchars($_POST['taskCategory']);
 
         $data = [
             'id' => $id,
-            'name' => $name
+            'name' => $name,
+            'category_id' => $taskCategory
         ];
 
-        insert('category', $data);
+        insert('task', $data);
 
         return mysqli_affected_rows($connection);
 
@@ -109,10 +108,10 @@ function searchCategories($searchTerm, $dataPerPage = 10, $currentPage = 1)
 
     $escapedSearchTerm = mysqli_real_escape_string($connection, $searchTerm);
 
- 
-    $searchCondition = "name LIKE '%{$escapedSearchTerm}%' OR id LIKE '%{$escapedSearchTerm}%'";
+    $searchCondition = "task LIKE '%{$escapedSearchTerm}%' OR id LIKE '%{$escapedSearchTerm}%'";
+    var_dump($searchCondition); // Debugging line to check the search condition
 
-    $countQuery = "SELECT COUNT(*) as total FROM category WHERE {$searchCondition}";
+    $countQuery = "SELECT COUNT(*) as total FROM task WHERE {$searchCondition}";
     $countResult = read($countQuery);
     $totalRows = (int) $countResult[0]['total'];
 
@@ -120,15 +119,16 @@ function searchCategories($searchTerm, $dataPerPage = 10, $currentPage = 1)
     $currentPage = min($currentPage, max(1, $totalPages)); // Ensure valid page
     $offset = ($currentPage - 1) * $dataPerPage;
 
-    $dataQuery = "SELECT * FROM category 
+    $dataQuery = "SELECT * FROM task 
                   WHERE {$searchCondition} 
                   ORDER BY created_at DESC 
                   LIMIT {$dataPerPage} OFFSET {$offset}";
 
-    $categories = read($dataQuery);
+    $tasks = read($dataQuery);
 
+    // ✅ RETURN: Structured data sama seperti showWithPagination
     return [
-        'categories' => $categories,
+        'tasks' => $tasks,
         'pagination' => [
             'totalRows' => $totalRows,
             'totalPages' => $totalPages,

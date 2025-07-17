@@ -1,5 +1,7 @@
+document.addEventListener("DOMContentLoaded", function () {
+  selectTaskCategory();
+});
 
-// toggle user menu button
 function toggleUserMenu() {
   const userMenuDropdown = document.getElementById("userMenuDropdown");
   userMenuDropdown.classList.toggle("hidden");
@@ -39,8 +41,7 @@ function showModal(type, menu) {
   }
 }
 
-function showEditModal(entity, data = {} ){
-
+function showEditModal(entity, data = {}) {
   showModal("update", entity);
 
   setTimeout(() => {
@@ -55,9 +56,35 @@ function closeModal(type, menu) {
   const modalType = `${type}-${menu}-modal`;
   const modal = document.getElementById(modalType);
 
-  
   if (modal) {
     console.log(modal);
     modal.classList.add("hidden");
   }
+}
+
+function selectTaskCategory() {
+  const btn = document.getElementById("dropdownBtn");
+  const list = document.getElementById("dropdownList");
+  const selected = document.getElementById("dropdownSelected");
+  const hiddenInput = document.getElementById("taskCategory");
+
+  if (!btn || !list || !selected || !hiddenInput) return;
+
+  btn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    list.classList.toggle("hidden");
+  });
+
+  list.querySelectorAll("li").forEach(function (item) {
+    item.addEventListener("click", function () {
+      selected.textContent = this.textContent;
+      hiddenInput.value = this.getAttribute("data-value");
+      list.classList.add("hidden");
+    });
+  });
+
+  // Close dropdown if click outside
+  document.addEventListener("click", function () {
+    list.classList.add("hidden");
+  });
 }
