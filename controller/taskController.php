@@ -103,16 +103,16 @@ function markDoneTask()
     return mysqli_affected_rows($connection); // Berhasil update
 }
 
-function destroy($taskName)
+function destroy($taskID)
 {
 
-    $checkName = read("SELECT id, name FROM task WHERE name = '$taskName'");
+    $checkID = read("SELECT id FROM task WHERE id = '$taskID'");
 
-    if ($checkName === 0) {
+    if ($checkID === 0) {
         return false;
     }
 
-    $result = delete('task', 'name', $taskName);
+    $result = delete('task', 'id', $taskID);
     return $result;
 }
 

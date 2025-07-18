@@ -7,7 +7,7 @@ function showSuccessAlert(title = "Success", message) {
   });
 }
 
-function showConfirmationDelete(data, name) {
+function showConfirmationDelete(data, id, name) {
   Swal.fire({
     title: "Are you sure?",
     text: `Do you want to delete ${data} "${name}"?`,
@@ -21,7 +21,7 @@ function showConfirmationDelete(data, name) {
     if (result.isConfirmed) {
       window.location.href = `?page=${encodeURIComponent(
         data
-      )}&action=delete&${data}Name=${encodeURIComponent(name)}`;
+      )}&action=delete&id=${encodeURIComponent(id)}`;
     }
   });
 }

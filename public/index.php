@@ -82,10 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // handle delete action
 if (isset($_GET['action']) && $_GET['action'] === 'delete') {
-    if (isset($_GET['categoryName'])) {
+    if (isset($_GET['id'])) {
         require_once '../controller/categoryController.php';
-        $categoryName = htmlspecialchars($_GET['categoryName']);
-        $result = destroy($categoryName);
+        $categoryID = htmlspecialchars($_GET['id']);
+        $result = destroy($categoryID);
         if ($result > 0) {
             $_SESSION['alert_type'] = 'success';
             $_SESSION['alert_message'] = 'Category has been successfully deleted!';
@@ -99,10 +99,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete') {
     }
 
 
-    if (isset($_GET['taskName'])) {
+    if (isset($_GET['id'])) {
         require_once '../controller/taskController.php';
-        $taskName = htmlspecialchars($_GET['taskName']);
-        $result = destroy($taskName);
+        $taskID = htmlspecialchars($_GET['id']);
+        $result = destroy($taskID);
         if ($result > 0) {
             $_SESSION['alert_type'] = 'success';
             $_SESSION['alert_message'] = 'Task has been successfully deleted!';

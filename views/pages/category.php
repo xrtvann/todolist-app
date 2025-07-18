@@ -92,11 +92,11 @@ $categories = show($start, $dataPerPage);
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button type="button" name="deleteCategory"
-                                            onclick="showConfirmationDelete('category','<?= htmlspecialchars($category['name']) ?>')"
+                                            onclick="showConfirmationDelete('category', '<?= htmlspecialchars($category['id']) ?>','<?= htmlspecialchars($category['name']) ?>')"
                                             class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200">
                                             <i class="fas fa-trash"></i>
                                         </button>
-                                    </div>  
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

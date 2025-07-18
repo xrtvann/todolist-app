@@ -85,16 +85,16 @@ function update()
     return 0;
 }
 
-function destroy($categoryName)
+function destroy($categoryID)
 {
 
-    $checkCategory = read("SELECT name FROM category WHERE name = '$categoryName'");
+    $checkID = read("SELECT id FROM category WHERE id = '$categoryID'");
 
-    if ($checkCategory === 0) {
+    if ($checkID === 0) {
         return false;
     }
 
-    $result = delete('category', 'name', $categoryName);
+    $result = delete('category', 'id', $categoryID);
     return $result;
 }
 
