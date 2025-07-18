@@ -32,8 +32,8 @@ function store()
 
     global $connection;
     if (isset($_POST['saveTask'])) {
-        $id = htmlspecialchars($_POST['TaskID']);
-        $name = htmlspecialchars($_POST['TaskName']);
+        $id = htmlspecialchars($_POST['taskID']);
+        $name = htmlspecialchars($_POST['taskName']);
         $taskCategory = htmlspecialchars($_POST['taskCategory']);
 
         $data = [
@@ -103,16 +103,16 @@ function markDoneTask()
     return mysqli_affected_rows($connection); // Berhasil update
 }
 
-function destroy($categoryName)
+function destroy($taskName)
 {
 
-    $checkCategory = read("SELECT name FROM category WHERE name = '$categoryName'");
+    $checkName = read("SELECT id, name FROM task WHERE name = '$taskName'");
 
-    if ($checkCategory === 0) {
+    if ($checkName === 0) {
         return false;
     }
 
-    $result = delete('category', 'name', $categoryName);
+    $result = delete('task', 'name', $taskName);
     return $result;
 }
 

@@ -229,14 +229,14 @@ $categories = $result;
                 <form action="" method="post">
                     <div class="input mb-20">
                         <div class="mb-4">
-                            <label for="TaskID" class="block text-gray-700 text-sm font-semibold mb-2">ID</label>
-                            <input type="text" id="TaskID" name="TaskID"
+                            <label for="taskID" class="block text-gray-700 text-sm font-semibold mb-2">ID</label>
+                            <input type="text" id="taskID" name="taskID"
                                 class="border border-gray-300 py-2 px-3 rounded focus:border-gray-500 focus:outline focus:outline-gray-50 w-full"
                                 required readonly value="<?php echo $newID; ?>">
                         </div>
                         <div class="mb-4">
-                            <label for="TaskName" class="block text-gray-700 text-sm font-semibold mb-2">Name</label>
-                            <input type="text" id="TaskName" name="TaskName"
+                            <label for="taskName" class="block text-gray-700 text-sm font-semibold mb-2">Name</label>
+                            <input type="text" id="taskName" name="taskName"
                                 class="border border-gray-300 py-2 px-3 rounded focus:border-gray-500 focus:outline focus:outline-gray-50 w-full"
                                 required>
                         </div>

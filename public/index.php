@@ -7,6 +7,7 @@ connectDatabase();
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
 // handle form subsmission
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($page === 'category' && isset($_POST['saveCategory'])) {
 
@@ -94,6 +95,23 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete') {
         }
         // Redirect sebelum ada HTML output
         header("Location: index.php?page=category");
+        exit();
+    }
+
+
+    if (isset($_GET['taskName'])) {
+        require_once '../controller/taskController.php';
+        $taskName = htmlspecialchars($_GET['taskName']);
+        $result = destroy($taskName);
+        if ($result > 0) {
+            $_SESSION['alert_type'] = 'success';
+            $_SESSION['alert_message'] = 'Task has been successfully deleted!';
+        } else {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = 'Failed to delete task!';
+        }
+        // Redirect sebelum ada HTML output
+        header("Location: index.php?page=task");
         exit();
     }
 }
