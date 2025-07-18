@@ -10,7 +10,7 @@ function generateCategoryID()
     $lastID = mysqli_fetch_assoc($result);
 
     if ($lastID) {
-        $lastNumber = (int) substr($lastID['id'], 6);
+        $lastNumber = (int) substr($lastID['id'], 4);
         $newNumber = $lastNumber + 1;
     } else {
         $newNumber = 1;
