@@ -111,11 +111,19 @@ $categories = $result;
                                         <form action="" method="post" style="display:inline;">
                                             <input type="hidden" name="doneTaskID"
                                                 value="<?= htmlspecialchars($task['id']) ?>">
-                                            <button type="submit" name="markAsDone"
-                                                class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-green-500 border border-green-500 hover:bg-green-500 hover:text-white transition-colors duration-200"
-                                                title="Mark as Done">
-                                                <i class="fas fa-check"></i>
-                                            </button>
+                                            <?php if ($task['status'] == 'done'): ?>
+                                                <button type="submit" name="markAsDone" disabled
+                                                    class="flex cursor-not-allowed justify-center items-center px-2 py-2 rounded text-white border border-green-500 bg-green-500"
+                                                    title="Mark as Done">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            <?php else: ?>
+                                                <button type="submit" name="markAsDone"
+                                                    class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-green-500 border border-green-500 hover:bg-green-500 hover:text-white transition-colors duration-200"
+                                                    title="Mark as Done">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            <?php endif; ?>
                                         </form>
                                         <button type="button"
                                             onclick="showEditModal('task', {id: '<?= htmlspecialchars($task['id']) ?>', name: '<?= htmlspecialchars($task['name']) ?>'})"
