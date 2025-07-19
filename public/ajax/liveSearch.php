@@ -125,12 +125,12 @@ if ($page === 'task') {
         </tr>
         <?php
     } else {
-        // COPIED: Pagination calculation dari category.php
+        // COPIED: Pagination calculation dari task.php
         $startNumber = 1; // Untuk search results mulai dari 1
         $i = $startNumber;
 
         foreach ($tasks as $task): ?>
-            <!-- COPIED: Table row dari views/pages/category.php -->
+            <!-- COPIED: Table row dari views/pages/task.php -->
             <tr class="table-row border-b border-slate-200 hover:bg-gray-50 transition-colors duration-200">
                 <?php
                 $createdAt = new DateTime($category['created_at']);
@@ -169,7 +169,7 @@ if ($page === 'task') {
                 <td class="table-cell py-2 px-4"><?php echo $task['category_name']; ?></td>
                 <td class="table-cell py-2 px-4"><?php echo $createdAtFormatted; ?></td>
                 <td class="table-cell py-2 px-4">
-                    <!-- COPIED: Action buttons dari views/pages/category.php -->
+                    <!-- COPIED: Action buttons dari views/pages/task.php -->
                     <div class="action-button flex gap-3">
                         <button type="button"
                             onclick="showEditModal('task', {id: '<?= htmlspecialchars($task['id'], ENT_QUOTES); ?>', name: '<?= htmlspecialchars($task['name'], ENT_QUOTES); ?>'})"
