@@ -1,7 +1,12 @@
 $(document).ready(function () {
-  $("#searchInputCategory").on("keyup", function () {
+  $("[data-search='livesearch']").on("keyup", function () {
+    const page = $(this).data("page");
+    const keyword = $(this).val();
     $("#table-body").load(
-      "ajax/liveSearch.php?keyword=" + $("#searchInputCategory").val()
+      "ajax/liveSearch.php?page=" +
+        encodeURIComponent(page) +
+        "&keyword=" +
+        encodeURIComponent(keyword)
     );
   });
 });

@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../utility/databaseUtility.php';
 $connection = connectDatabase();
-function generateCategoryID()
+function generateTaskID()
 {
     global $connection;
     $query = "SELECT id FROM task ORDER BY id DESC LIMIT 1";
@@ -116,7 +116,7 @@ function destroy($taskID)
     return $result;
 }
 
-function searchCategories($searchTerm, $dataPerPage = 10, $currentPage = 1)
+function searchTask($searchTerm, $dataPerPage = 10, $currentPage = 1)
 {
     global $connection;
 
@@ -127,10 +127,11 @@ function searchCategories($searchTerm, $dataPerPage = 10, $currentPage = 1)
 
     $escapedSearchTerm = mysqli_real_escape_string($connection, $searchTerm);
 
-    $searchCondition = "task LIKE '%{$escapedSearchTerm}%' OR id LIKE '%{$escapedSearchTerm}%'";
-    var_dump($searchCondition); // Debugging line to check the search condition
+    $searchCondition = "task.name LIKE '%{$escapedSearchTerm}%' 
+                        OR task.id LIKE '%{$escapedSearchTerm}%' 
+                        OR category.name LIKE '%{$escapedSearchTerm}%'";
 
-    $countQuery = "SELECT COUNT(*) as total FROM task WHERE {$searchCondition}";
+    $countQuery = "SELECT COUNT(*) as total FROM task INNER JOIN category ON task.category_id = category.id WHERE {$searchCondition}";
     $countResult = read($countQuery);
     $totalRows = (int) $countResult[0]['total'];
 
@@ -138,9 +139,12 @@ function searchCategories($searchTerm, $dataPerPage = 10, $currentPage = 1)
     $currentPage = min($currentPage, max(1, $totalPages)); // Ensure valid page
     $offset = ($currentPage - 1) * $dataPerPage;
 
-    $dataQuery = "SELECT * FROM task 
+    $dataQuery = "SELECT task.*,
+     category.name AS category_name 
+    FROM task 
+    INNER JOIN category ON task.category_id = category.id 
                   WHERE {$searchCondition} 
-                  ORDER BY created_at DESC 
+                  ORDER BY task.created_at DESC 
                   LIMIT {$dataPerPage} OFFSET {$offset}";
 
     $tasks = read($dataQuery);

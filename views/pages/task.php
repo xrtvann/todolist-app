@@ -8,9 +8,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// generate a unique ID for the new category
-$newID = generateCategoryID();
-// fetch categories with pagination
+// generate a unique ID for the new task
+$newID = generateTaskID();
+// fetch tasks with pagination
 $pagination = pagination('task', 10);
 $start = $pagination['start'];
 $currentPage = $pagination['currentPage'];
@@ -38,7 +38,7 @@ $categories = $result;
                 <form action="" method="post" class="relative">
                     <!-- Search input -->
                     <i class="fa fa-search absolute text-gray-400 top-2 left-2"></i>
-                    <input id="searchInputTask" name="searchInputTask" type="text" placeholder="Search"
+                    <input data-search="livesearch" data-page="task" id="searchInputTask" name="searchInputTask" type="text" placeholder="Search"
                         class="border border-gray-300 py-1 px-8 rounded focus:border-gray-500 focus:outline focus:outline-gray-50">
                 </form>
 
