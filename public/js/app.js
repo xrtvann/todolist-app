@@ -49,6 +49,12 @@ function showEditModal(entity, data = {}) {
       document.getElementById("updateCategoryID").value = data.id || "";
       document.getElementById("updateCategoryName").value = data.name || "";
     }
+
+    if (entity === "task") {
+      document.getElementById("updateTaskID").value = data.id || "";
+      document.getElementById("updateTaskName").value = data.name || "";
+      setUpdateDropdown(data.category_id, data.category_name);
+    }
   }, 100);
 }
 
@@ -88,3 +94,34 @@ function selectTaskCategory() {
     list.classList.add("hidden");
   });
 }
+
+function setUpdateDropdown(selectedValue, selectedText) {
+  const selected = document.getElementById("updateDropdownSelected");
+  const hiddenInput = document.getElementById("updateTaskCategory");
+
+  if (selected && hiddenInput) {
+    selected.textContent = selectedText;
+    hiddenInput.value = selectedValue;
+  }
+}
+
+// Event listener untuk klik pada list
+document.querySelectorAll("#updateDropdownList li").forEach(function (item) {
+  item.addEventListener("click", function () {
+    setUpdateDropdown(this.getAttribute("data-value"), this.textContent);
+    document.getElementById("updateDropdownList").classList.add("hidden");
+  });
+});
+
+// Saat tombol dropdown diklik
+document
+  .getElementById("updateDropdownBtn")
+  .addEventListener("click", function (e) {
+    e.stopPropagation();
+    document.getElementById("updateDropdownList").classList.toggle("hidden");
+  });
+
+// Tutup dropdown jika klik di luar
+document.addEventListener("click", function () {
+  document.getElementById("updateDropdownList").classList.add("hidden");
+});

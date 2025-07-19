@@ -78,6 +78,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: index.php?page=category");
         exit();
     }
+
+    if ($page === 'task' && isset($_POST['saveChangesTask'])) {
+        require_once '../controller/taskController.php';
+        $result = update();
+
+        if ($result > 0) {
+            $_SESSION['alert_type'] = 'success';
+            $_SESSION['alert_message'] = 'Task has been successfully updated!';
+        } else {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = 'Failed to update task!';
+        }
+
+        // Redirect sebelum ada HTML output
+        header("Location: index.php?page=task");
+        exit();
+    }
 }
 
 // handle delete action

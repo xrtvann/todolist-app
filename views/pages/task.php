@@ -38,7 +38,8 @@ $categories = $result;
                 <form action="" method="post" class="relative">
                     <!-- Search input -->
                     <i class="fa fa-search absolute text-gray-400 top-2 left-2"></i>
-                    <input data-search="livesearch" data-page="task" id="searchInputTask" name="searchInputTask" type="text" placeholder="Search"
+                    <input data-search="livesearch" data-page="task" id="searchInputTask" name="searchInputTask"
+                        type="text" placeholder="Search"
                         class="border border-gray-300 py-1 px-8 rounded focus:border-gray-500 focus:outline focus:outline-gray-50">
                 </form>
 
@@ -126,7 +127,7 @@ $categories = $result;
                                             <?php endif; ?>
                                         </form>
                                         <button type="button"
-                                            onclick="showEditModal('task', {id: '<?= htmlspecialchars($task['id']) ?>', name: '<?= htmlspecialchars($task['name']) ?>'})"
+                                            onclick="showEditModal('task', {id: '<?= htmlspecialchars($task['id']) ?>', name: '<?= htmlspecialchars($task['name']) ?>', category_id: '<?= htmlspecialchars($task['category_id']) ?>', category_name: '<?= htmlspecialchars($task['category_name']) ?>'})"
                                             class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white transition-colors duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -219,6 +220,7 @@ $categories = $result;
         </div>
 
     </div>
+
     <div class="fixed inset-0 z-50 items-center justify-center flex hidden" id="add-task-modal">
         <div class="absolute inset-0 bg-black opacity-60"></div>
         <div class="modal relative w-2xl rounded-md">
@@ -276,6 +278,71 @@ $categories = $result;
                         <button type="submit" name="saveTask"
                             class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 cursor-pointer">
                             <i class="fa fa-save me-1.5"></i> Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-50 items-center justify-center flex hidden" id="update-task-modal">
+        <div class="absolute inset-0 bg-black opacity-60"></div>
+        <div class="modal relative w-2xl rounded-md">
+            <div class="modal-title bg-slate-100 px-4 py-2.5 flex justify-center items-center rounded-t-md">
+                <h2 class="text-xl font-semibold">Update Task</h2>
+            </div>
+            <div class="modal-content bg-white p-6 rounded-b-md">
+                <form action="" method="post">
+                    <div class="input mb-20">
+                        <div class="mb-4">
+                            <label for="updateTaskID" class="block text-gray-700 text-sm font-semibold mb-2">ID</label>
+                            <input type="text" id="updateTaskID" name="updateTaskID"
+                                class="border border-gray-300 py-2 px-3 rounded focus:border-gray-500 focus:outline focus:outline-gray-50 w-full"
+                                required readonly value="<?php echo $newID; ?>">
+                        </div>
+                        <div class="mb-4">
+                            <label for="updateTaskName"
+                                class="block text-gray-700 text-sm font-semibold mb-2">Name</label>
+                            <input type="text" id="updateTaskName" name="updateTaskName"
+                                class="border border-gray-300 py-2 px-3 rounded focus:border-gray-500 focus:outline focus:outline-gray-50 w-full"
+                                required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="updateTaskCategory"
+                                class="block text-gray-700 text-sm font-semibold mb-2">Category</label>
+                            <div class="relative" id="update-dropdown-wrapper">
+                                <button type="button" name="dropdownSelected" id="updateDropdownBtn"
+                                    class="w-full border border-gray-300 py-2 px-3 rounded text-left bg-white flex justify-between items-center">
+                                    <span id="updateDropdownSelected">Select Category</span>
+                                    <svg class="w-4 h-4 ml-2 inline" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <ul id="updateDropdownList"
+                                    class="absolute z-50 w-full bg-white border border-gray-300 rounded mt-1 max-h-30 overflow-y-auto hidden">
+                                    <?php foreach ($categories as $category): ?>
+                                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            data-value="<?= htmlspecialchars($category['id']) ?>">
+                                            <?= htmlspecialchars($category['name']) ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <!-- Hidden input for PHP -->
+                                <input type="hidden" name="updateTaskCategory" id="updateTaskCategory" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-button flex justify-end gap-2">
+                        <button type="button" onclick="closeModal('update', 'task')"
+                            class="px-4 py-2 bg-slate-500 text-white rounded hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-300 cursor-pointer">
+                            <i class="fa fa-close me-1.5"></i> Close
+                        </button>
+                        <button type="submit" name="saveChangesTask"
+                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 cursor-pointer">
+                            <i class="fa fa-save me-1.5"></i> Save Changes
                         </button>
                     </div>
                 </form>

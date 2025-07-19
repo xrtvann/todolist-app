@@ -54,17 +54,18 @@ function update()
 
     global $connection;
 
-    if (isset($_POST['saveChangesCategory'])) {
+    if (isset($_POST['saveChangesTask'])) {
 
 
-        $categoryID = htmlspecialchars($_POST['updateCategoryID']);
-        $newCategoryName = htmlspecialchars($_POST['updateCategoryName']);
+        $taskID = htmlspecialchars($_POST['updateTaskID']);
+        $newTaskName = htmlspecialchars($_POST['updateTaskName']);
+        $newTaskCategory = htmlspecialchars($_POST['updateTaskCategory']);
 
-        if (empty($categoryID) || empty($newCategoryName)) {
+        if (empty($taskID) || empty($newTaskName) || empty($newTaskCategory)) {
             return 0;
         }
 
-        $checkQuery = "SELECT id FROM category WHERE name = '{$newCategoryName}' AND id != '{$categoryID}'";
+        $checkQuery = "SELECT id FROM category WHERE name = '{$newTaskCategory}' AND id != '{$taskID}'";
         $checkExisting = read($checkQuery);
 
         if (!empty($checkExisting)) {
@@ -72,12 +73,13 @@ function update()
         }
 
         $data = [
-            'name' => $newCategoryName
+            'name' => $newTaskName,
+            'category_id' => $newTaskCategory
         ];
 
-        $condition = "id = '{$categoryID}'";
+        $condition = "id = '{$taskID}'";
 
-        $result = edit('category', $data, $condition);
+        $result = edit('task', $data, $condition);
 
         return $result;
     }
