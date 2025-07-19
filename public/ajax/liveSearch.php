@@ -188,10 +188,10 @@ if ($page === 'task') {
 
         // Show search results info
         if (!empty($searchInput)) {
-            $resultCount = count($categories);
+            $resultCount = count($tasks);
             ?>
             <tr class="bg-blue-50">
-                <td colspan="4" class="text-center py-2 text-sm text-blue-600">
+                <td colspan="6" class="text-center py-2 text-sm text-blue-600">
                     <i class="fas fa-info-circle mr-1"></i>
                     Found <?= $resultCount ?> result<?= $resultCount != 1 ? 's' : '' ?> for "<?= htmlspecialchars($searchInput) ?>"
                 </td>
