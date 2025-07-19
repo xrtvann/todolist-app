@@ -128,7 +128,6 @@ function searchTask($searchTerm, $dataPerPage = 10, $currentPage = 1)
     $escapedSearchTerm = mysqli_real_escape_string($connection, $searchTerm);
 
     $searchCondition = "task.name LIKE '%{$escapedSearchTerm}%' 
-                        OR task.id LIKE '%{$escapedSearchTerm}%' 
                         OR category.name LIKE '%{$escapedSearchTerm}%'";
 
     $countQuery = "SELECT COUNT(*) as total FROM task INNER JOIN category ON task.category_id = category.id WHERE {$searchCondition}";

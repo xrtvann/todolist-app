@@ -166,19 +166,49 @@ if ($page === 'task') {
                         </p>
                     </td>
                 <?php endif; ?>
-                <td class="table-cell py-2 px-4"><?php echo $task['category_name']; ?></td>
+                <td class="table-cell py-2 px-4">
+                    <?php
+                    // Highlight search term
+                    $taskCategory = htmlspecialchars($task['category_name']);
+                    if (!empty($searchInput)) {
+                        $highlighted = str_ireplace(
+                            $searchInput,
+                            '<mark class="bg-yellow-200 px-1 rounded">' . htmlspecialchars($searchInput) . '</mark>',
+                            $taskCategory
+                        );
+                        echo $highlighted;
+                    } else {
+                        echo $taskCategory;
+                    }
+                    ?>
+                </td>
                 <td class="table-cell py-2 px-4"><?php echo $createdAtFormatted; ?></td>
                 <td class="table-cell py-2 px-4">
-                    <!-- COPIED: Action buttons dari views/pages/task.php -->
                     <div class="action-button flex gap-3">
+                        <form action="" method="post" style="display:inline;">
+                            <input type="hidden" name="doneTaskID" value="<?= htmlspecialchars($task['id']) ?>">
+                            <?php if ($task['status'] == 'done'): ?>
+                                <button type="submit" name="markAsDone" disabled
+                                    class="flex cursor-not-allowed justify-center items-center px-2 py-2 rounded text-white border border-green-500 bg-green-500"
+                                    title="Mark as Done">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            <?php else: ?>
+                                <button type="submit" name="markAsDone"
+                                    class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-green-500 border border-green-500 hover:bg-green-500 hover:text-white transition-colors duration-200"
+                                    title="Mark as Done">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            <?php endif; ?>
+                        </form>
                         <button type="button"
-                            onclick="showEditModal('task', {id: '<?= htmlspecialchars($task['id'], ENT_QUOTES); ?>', name: '<?= htmlspecialchars($task['name'], ENT_QUOTES); ?>'})"
-                            class="flex justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white transition-colors duration-200">
+                            onclick="showEditModal('task', {id: '<?= htmlspecialchars($task['id']) ?>', name: '<?= htmlspecialchars($task['name']) ?>'})"
+                            class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white transition-colors duration-200">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button type="button"
-                            onclick="showConfirmationDelete('task', '<?= htmlspecialchars($task['id'], ENT_QUOTES) ?>', '<?= htmlspecialchars($task['name'], ENT_QUOTES) ?>')"
-                            class="flex justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200">
+                            onclick="showConfirmationDelete('task', '<?= htmlspecialchars($task['id']) ?>', '<?= htmlspecialchars($task['name']) ?>')"
+                            class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
