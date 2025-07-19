@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // handle delete action
 if (isset($_GET['action']) && $_GET['action'] === 'delete') {
-    if (isset($_GET['id'])) {
+    if (isset($_GET['page']) && $_GET['page'] === 'category' && isset($_GET['id'])) {
         require_once '../controller/categoryController.php';
         $categoryID = htmlspecialchars($_GET['id']);
         $result = destroy($categoryID);
@@ -99,7 +99,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete') {
     }
 
 
-    if (isset($_GET['id'])) {
+    if (isset($_GET['page']) && $_GET['page'] === 'task' && isset($_GET['id'])) {
         require_once '../controller/taskController.php';
         $taskID = htmlspecialchars($_GET['id']);
         $result = destroy($taskID);
