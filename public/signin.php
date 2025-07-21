@@ -35,11 +35,11 @@
                             <i class="fas fa-lock"></i>
                         </div>
                         <div class="input">
-                            <input type="password" class="focus:outline-none" name="password" placeholder="Password"
+                            <input type="password" id="inputPassword" class="focus:outline-none" name="password" placeholder="Password"
                                 required>
                         </div>
                         <div class="show-password w-full flex justify-end">
-                            <div class="icon text-gray-600 cursor-pointer">
+                            <div class="icon text-gray-600 cursor-pointer" id="togglePassword">
                                 <i class="fas fa-eye"></i>
                             </div>
                         </div>
@@ -58,6 +58,7 @@
             </div>
         </div>
     </div>
+    <script src="js/auth.js"></script>
 </body>
 
 </html>
