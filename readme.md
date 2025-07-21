@@ -256,9 +256,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 👨‍💻 Author
 
-**Your Name**
-
-- GitHub: [@xrtvann](https://github.com/your-username)
+- GitHub: [@xrtvann](https://github.com/xrtvann)
 - Email: muhammadirvan011206@gmail.com
 
 ---
