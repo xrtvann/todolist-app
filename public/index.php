@@ -3,7 +3,14 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once '../config/database.php';
+
+if (!isset($_SESSION['login']) || !$_SESSION['login']) {
+    header("Location: signin.php");
+    exit();
+}
 connectDatabase();
+
+
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
 // handle form subsmission

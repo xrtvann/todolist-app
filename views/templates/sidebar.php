@@ -40,7 +40,7 @@
         </ul>
         <ul>
             <li>
-                <a href="?page=logout" class="flex items-center px-4 py-2 rounded hover:bg-red-600  hover:text-white text-gray-700 font-medium <?php echo ($currentPage == 'logout') ? 'bg-red-600 text-white' : ''; ?>">
+                <a href="logout.php" class="flex items-center px-4 py-2 rounded hover:bg-red-600  hover:text-white text-gray-700 font-medium <?php echo ($currentPage == 'logout') ? 'bg-red-600 text-white' : ''; ?>">
                     <div class="icon w-6 text-center"><i class="fa-solid fa-right-from-bracket"></i></div>
                     <span class="sidebar-text ml-4">Logout</span>
                 </a>

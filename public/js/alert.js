@@ -25,3 +25,13 @@ function showConfirmationDelete(data, id, name) {
     }
   });
 }
+
+showErrorAlert = (title, message) => {
+  Swal.fire({
+    icon: "error",
+    title: title,
+    text: message,
+    confirmButtonColor: "#ef4444",
+    confirmButtonText: "Try Again",
+  });
+};

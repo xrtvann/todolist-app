@@ -27,7 +27,7 @@ $categories = $result;
 <main class="p-6">
     <div class="flex justify-between items-start">
         <div class="title">
-            <h1 class="text-3xl font-bold mb-4">Tasks</h1>
+            <h1 class="text-2xl font-semibold mb-2">Tasks</h1>
             <p>Organize your tasks Effectively</p>
         </div>
     </div>
