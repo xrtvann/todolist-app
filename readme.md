@@ -19,7 +19,7 @@
 
 ## ✨ Features
 
-- 🔐 **User Authentication** - Secure registration and login system
+- 🔐 **User Authentication** - Secure registration and login system with encrypted sessions
 - 📋 **Task Management** - Create, edit, delete, and mark tasks as complete
 - 🗂️ **Categories** - Organize tasks with custom categories
 - 🔍 **Live Search** - Real-time search across tasks and categories
@@ -27,6 +27,8 @@
 - 📱 **Responsive Design** - Works on desktop, tablet, and mobile
 - 🎨 **Modern Interface** - Clean and intuitive user experience
 - ⚡ **Fast Performance** - Smooth and responsive interactions
+- 🔒 **Enhanced Security** - AES-256-CBC encrypted session data and user isolation
+- 🛡️ **Data Protection** - User-scoped data access with proper authorization
 
 ---
 
@@ -143,9 +145,19 @@ Before you begin, ensure you have the following installed:
    DB_USERNAME=root
    DB_PASSWORD=
    DB_DATABASE=todolist_db
+   SESSION_ENCRYPT_KEY=your-32-character-encryption-key-here
    ```
 
-6. **Access the Application**
+6. **Run Database Migration**
+
+   Execute the SQL migration script to add user isolation:
+
+   ```sql
+   -- Run database_migration.sql in your MySQL client
+   -- This adds user_id columns to category and task tables
+   ```
+
+7. **Access the Application**
    - Open your browser and navigate to:
      - **Local**: `http://localhost/todolist-app/public/`
      - **Laragon**: `http://todolist-app.test/public/`
@@ -174,6 +186,9 @@ Before you begin, ensure you have the following installed:
    # Application Settings
    APP_NAME="ToDo List App"
    APP_URL=http://localhost/todolist-app
+
+   # Security Settings (IMPORTANT!)
+   SESSION_ENCRYPT_KEY=your-32-character-encryption-key-here
    ```
 
 3. **Database Tables**
@@ -183,6 +198,42 @@ Before you begin, ensure you have the following installed:
    - `users` - Store user accounts and authentication
    - `category` - Organize tasks into categories
    - `task` - Main task storage with status and relationships
+
+---
+
+## 🔒 Security Features
+
+This application implements enterprise-level security features to protect user data:
+
+### 🛡️ **Session Security**
+
+- **AES-256-CBC Encryption**: All session data is encrypted before storage
+- **Secure Session Management**: User IDs and usernames are never stored in plain text
+- **Session Validation**: Multi-layer validation prevents session hijacking
+- **Environment-based Keys**: Encryption keys are managed through environment variables
+
+### 👤 **User Data Isolation**
+
+- **User-scoped Queries**: All database operations are filtered by user_id
+- **Authorization Checks**: Users can only access their own data
+- **Secure Controllers**: All CRUD operations include ownership validation
+- **Protected Endpoints**: Session validation on all protected routes
+
+### 🔐 **Authentication Security**
+
+- **Password Hashing**: Passwords are hashed using PHP's secure password_hash()
+- **Remember Me Feature**: Secure cookie-based authentication
+- **Session Integrity**: Additional session tokens prevent unauthorized access
+- **Automatic Logout**: Session cleanup on logout and expiration
+
+### 🚀 **Implementation Benefits**
+
+- ✅ **Data Protection**: Session data encrypted in browser storage
+- ✅ **Privacy**: Users cannot access other users' data
+- ✅ **Integrity**: Session tampering detection and prevention
+- ✅ **Compliance**: Follows security best practices for web applications
+
+For detailed security documentation, see [SECURITY.md](SECURITY.md)
 
 ---
 

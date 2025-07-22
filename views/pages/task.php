@@ -17,9 +17,11 @@ $currentPage = $pagination['currentPage'];
 $amountOfPage = $pagination['amountOfPage'];
 $amountOfData = $pagination['amountOfData'];
 $dataPerPage = $pagination['dataPerPage'];
-$tasks = show($start, $dataPerPage);
+$tasks = show($dataPerPage, $start);
 
-$query = "SELECT * FROM category";
+// Get user's categories for dropdown
+$userId = getCurrentUserId();
+$query = "SELECT * FROM category WHERE user_id = '$userId' ORDER BY name";
 $result = read($query);
 $categories = $result;
 ?>
@@ -81,143 +83,162 @@ $categories = $result;
                         $startNumber = ($pagination['currentPage'] - 1) * $pagination['dataPerPage'] + 1;
                         $i = $startNumber;
                         ?>
-                        <?php foreach ($tasks as $task): ?>
-                            <!-- ✅ Tambah hover effect pada row -->
-                            <tr class="table-row border-b border-slate-200 hover:bg-gray-50 transition-colors duration-200">
-                                <?php
-                                $createdAt = new DateTime($task['created_at']);
-                                $createdAtFormatted = $createdAt->format('d M Y H:i');
-                                ?>
-                                <td class="table-cell py-2 px-4"><?php echo $i++; ?></td>
-                                <td class="table-cell py-2 px-4"><?php echo $task['name']; ?></td>
-                                <?php if ($task['status'] === 'pending'): ?>
-                                    <td class="table-cell py-2 px-4">
-                                        <p
-                                            class="flex bg-orange-100 px-2 rounded-full justify-center w-25 text-orange-600 font-semibold">
-                                            <?php echo $task['status']; ?>
-                                        </p>
-                                    </td>
-                                <?php elseif ($task['status'] === 'done'): ?>
-                                    <td class="table-cell py-2 px-4">
-                                        <p
-                                            class="flex bg-green-100 px-2 rounded-full justify-center w-25 text-green-600 font-semibold">
-                                            <?php echo $task['status']; ?>
-                                        </p>
-                                    </td>
-                                <?php endif; ?>
-                                <td class="table-cell py-2 px-4"><?php echo $task['category_name']; ?></td>
-                                <td class="table-cell py-2 px-4"><?php echo $createdAtFormatted; ?></td>
-                                <td class="table-cell py-2 px-4">
-                                    <div class="action-button flex gap-3">
-                                        <form action="" method="post" style="display:inline;">
-                                            <input type="hidden" name="doneTaskID"
-                                                value="<?= htmlspecialchars($task['id']) ?>">
-                                            <?php if ($task['status'] == 'done'): ?>
-                                                <button type="submit" name="markAsDone" disabled
-                                                    class="flex cursor-not-allowed justify-center items-center px-2 py-2 rounded text-white border border-green-500 bg-green-500"
-                                                    title="Mark as Done">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                            <?php else: ?>
-                                                <button type="submit" name="markAsDone"
-                                                    class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-green-500 border border-green-500 hover:bg-green-500 hover:text-white transition-colors duration-200"
-                                                    title="Mark as Done">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                            <?php endif; ?>
-                                        </form>
-                                        <button type="button"
-                                            onclick="showEditModal('task', {id: '<?= htmlspecialchars($task['id']) ?>', name: '<?= htmlspecialchars($task['name']) ?>', category_id: '<?= htmlspecialchars($task['category_id']) ?>', category_name: '<?= htmlspecialchars($task['category_name']) ?>'})"
-                                            class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white transition-colors duration-200">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button type="button"
-                                            onclick="showConfirmationDelete('task', '<?= htmlspecialchars($task['id']) ?>', '<?= htmlspecialchars($task['name']) ?>')"
-                                            class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                        <?php if (empty($tasks)): ?>
+                            <tr>
+                                <td colspan="6" class="text-center py-12 text-gray-500">
+                                    <div class="flex flex-col items-center">
+                                        <i class="fas fa-tasks text-4xl mb-3 text-gray-300"></i>
+                                        <p class="text-lg font-medium">No tasks found</p>
+                                        <p class="text-sm">Start by creating your first task</p>
                                     </div>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php foreach ($tasks as $task): ?>
+                                <!-- ✅ Tambah hover effect pada row -->
+                                <tr class="table-row border-b border-slate-200 hover:bg-gray-50 transition-colors duration-200">
+                                    <?php
+                                    $createdAt = new DateTime($task['created_at']);
+                                    $createdAtFormatted = $createdAt->format('d M Y H:i');
+                                    ?>
+                                    <td class="table-cell py-2 px-4"><?php echo $i++; ?></td>
+                                    <td class="table-cell py-2 px-4"><?php echo $task['name']; ?></td>
+                                    <?php if ($task['status'] === 'pending'): ?>
+                                        <td class="table-cell py-2 px-4">
+                                            <p
+                                                class="flex bg-orange-100 px-2 rounded-full justify-center w-25 text-orange-600 font-semibold">
+                                                <?php echo $task['status']; ?>
+                                            </p>
+                                        </td>
+                                    <?php elseif ($task['status'] === 'done'): ?>
+                                        <td class="table-cell py-2 px-4">
+                                            <p
+                                                class="flex bg-green-100 px-2 rounded-full justify-center w-25 text-green-600 font-semibold">
+                                                <?php echo $task['status']; ?>
+                                            </p>
+                                        </td>
+                                    <?php endif; ?>
+                                    <td class="table-cell py-2 px-4"><?php echo $task['category_name']; ?></td>
+                                    <td class="table-cell py-2 px-4"><?php echo $createdAtFormatted; ?></td>
+                                    <td class="table-cell py-2 px-4">
+                                        <div class="action-button flex gap-3">
+                                            <form action="" method="post" style="display:inline;">
+                                                <input type="hidden" name="doneTaskID"
+                                                    value="<?= htmlspecialchars($task['id']) ?>">
+                                                <?php if ($task['status'] == 'done'): ?>
+                                                    <button type="submit" name="markAsDone" disabled
+                                                        class="flex cursor-not-allowed justify-center items-center px-2 py-2 rounded text-white border border-green-500 bg-green-500"
+                                                        title="Mark as Done">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                <?php else: ?>
+                                                    <button type="submit" name="markAsDone"
+                                                        class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-green-500 border border-green-500 hover:bg-green-500 hover:text-white transition-colors duration-200"
+                                                        title="Mark as Done">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                <?php endif; ?>
+                                            </form>
+                                            <button type="button"
+                                                onclick="showEditModal('task', {id: '<?= htmlspecialchars($task['id']) ?>', name: '<?= htmlspecialchars($task['name']) ?>', category_id: '<?= htmlspecialchars($task['category_id']) ?>', category_name: '<?= htmlspecialchars($task['category_name']) ?>'})"
+                                                class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white transition-colors duration-200">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button"
+                                                onclick="showConfirmationDelete('task', '<?= htmlspecialchars($task['id']) ?>', '<?= htmlspecialchars($task['name']) ?>')"
+                                                class="flex cursor-pointer justify-center items-center px-2 py-2 rounded text-red-500 border border-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="pagination-wrapper mt-6 py-4">
-            <div class="flex items-center justify-between">
-                <!-- Info pagination -->
-                <?php
-                $startRecord = ($pagination['currentPage'] - 1) * $pagination['dataPerPage'] + 1;
-                $endRecord = min($pagination['currentPage'] * $pagination['dataPerPage'], $pagination['amountOfData']);
-                ?>
-                <div class="pagination-info text-sm text-gray-700">
-                    Showing <span class="font-medium"><?= $startRecord ?></span> to <span
-                        class="font-medium"><?= $endRecord ?></span> of <span
-                        class="font-medium"><?= $pagination['amountOfData'] ?></span> results
-                </div>
-
-                <!-- ✅ Pagination controls -->
-                <div class="pagination-controls flex items-center space-x-2">
-                    <!-- ✅ Previous button -->
-                    <?php if ($currentPage == 1): ?>
-                        <a
-                            class="pagination-btn flex items-center px-3 py-2 text-sm font-medium cursor-not-allowed text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                            <i class="fas fa-chevron-left mr-2"></i>
-                            Previous
-                        </a>
-                    <?php else: ?>
-                        <a href="?page=task&p=<?= previousButton($currentPage) ?>"
-                            class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                            <i class="fas fa-chevron-left mr-2"></i>
-                            Previous
-                        </a>
-                    <?php endif; ?>
-
-                    <!-- ✅ Page numbers -->
-                    <div class="pagination-numbers flex items-center space-x-1">
-
-
-
-
-
-
-                        <?php for ($i = 1; $i <= $amountOfPage; $i++): ?>
-                            <?php if ($i == $currentPage): ?>
-                                <a href="?page=task&p=<?= $i ?>"
-                                    class="pagination-number px-3 py-2 text-sm font-medium text-white bg-green-600 border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                                    <?= $i ?>
-                                </a>
-                            <?php else: ?>
-                                <a href="?page=task&p=<?= $i ?>"
-                                    class="pagination-number px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                                    <?= $i ?>
-                                </a>
-                            <?php endif; ?>
-                        <?php endfor; ?>
-
-
-
+        <?php if (!empty($tasks) && $pagination['amountOfData'] > 0): ?>
+            <div class="pagination-wrapper mt-6 py-4">
+                <div class="flex items-center justify-between">
+                    <!-- Info pagination -->
+                    <?php
+                    if ($pagination['amountOfData'] > 0) {
+                        $startRecord = ($pagination['currentPage'] - 1) * $pagination['dataPerPage'] + 1;
+                        $endRecord = min($pagination['currentPage'] * $pagination['dataPerPage'], $pagination['amountOfData']);
+                    } else {
+                        $startRecord = 0;
+                        $endRecord = 0;
+                    }
+                    ?>
+                    <div class="pagination-info text-sm text-gray-700">
+                        Showing <span class="font-medium"><?= $startRecord ?></span> to <span
+                            class="font-medium"><?= $endRecord ?></span> of <span
+                            class="font-medium"><?= $pagination['amountOfData'] ?></span> results
                     </div>
 
-                    <!-- ✅ Next button -->
-                    <?php if ($currentPage == $amountOfPage): ?>
-                        <a
-                            class="pagination-btn flex items-center px-3 py-2 text-sm font-medium cursor-not-allowed text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                            Next
-                            <i class="fas fa-chevron-right ml-2"></i>
-                        </a>
-                    <?php else: ?>
-                        <a href="?page=task&p=<?= nextButton($currentPage, $amountOfPage) ?>"
-                            class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
-                            Next
-                            <i class="fas fa-chevron-right ml-2"></i>
-                        </a>
-                    <?php endif; ?>
+                    <!-- ✅ Pagination controls -->
+                    <div class="pagination-controls flex items-center space-x-2">
+                        <!-- ✅ Previous button -->
+                        <?php if ($currentPage == 1): ?>
+                            <a
+                                class="pagination-btn flex items-center px-3 py-2 text-sm font-medium cursor-not-allowed text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                                <i class="fas fa-chevron-left mr-2"></i>
+                                Previous
+                            </a>
+                        <?php else: ?>
+                            <a href="?page=task&p=<?= previousButton($currentPage) ?>"
+                                class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                                <i class="fas fa-chevron-left mr-2"></i>
+                                Previous
+                            </a>
+                        <?php endif; ?>
+
+                        <!-- ✅ Page numbers -->
+                        <div class="pagination-numbers flex items-center space-x-1">
+
+
+
+
+
+
+                            <?php for ($i = 1; $i <= $amountOfPage; $i++): ?>
+                                <?php if ($i == $currentPage): ?>
+                                    <a href="?page=task&p=<?= $i ?>"
+                                        class="pagination-number px-3 py-2 text-sm font-medium text-white bg-green-600 border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                                        <?= $i ?>
+                                    </a>
+                                <?php else: ?>
+                                    <a href="?page=task&p=<?= $i ?>"
+                                        class="pagination-number px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                                        <?= $i ?>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+
+
+
+                        </div>
+
+                        <!-- ✅ Next button -->
+                        <?php if ($currentPage == $amountOfPage): ?>
+                            <a
+                                class="pagination-btn flex items-center px-3 py-2 text-sm font-medium cursor-not-allowed text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                                Next
+                                <i class="fas fa-chevron-right ml-2"></i>
+                            </a>
+                        <?php else: ?>
+                            <a href="?page=task&p=<?= nextButton($currentPage, $amountOfPage) ?>"
+                                class="pagination-btn flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                                Next
+                                <i class="fas fa-chevron-right ml-2"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
-        </div>
+        <?php endif; ?>
 
     </div>
 

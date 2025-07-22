@@ -15,7 +15,7 @@ function signIn()
 
     $escapedUsername = mysqli_real_escape_string($connection, $username);
     $escapedPassword = mysqli_real_escape_string($connection, $password);
-    $query = "SELECT id, username, password FROM users WHERE username = '$escapedUsername'";
+    $query = "SELECT id, username, password, full_name FROM users WHERE username = '$escapedUsername'";
 
     $result = read($query);
     if (empty($result)) {
@@ -27,7 +27,7 @@ function signIn()
 
 
     if ($user['username'] && password_verify($escapedPassword, $user['password'])) {
-        $_SESSION['login'] = true;
+        setSecureUserSession($user['id'], $user['username'], $user['full_name']);
 
         if (isset($_POST['remember-me'])) {
             setcookie('id', $user['id'], time() + 3600);

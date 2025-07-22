@@ -2,3 +2,5 @@
 /vendor
 /node_modules
 /public/css/style.css
+/.github
+/.vscode

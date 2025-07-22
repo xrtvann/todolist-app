@@ -3,13 +3,13 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once '../config/database.php';
+require_once '../utility/databaseUtility.php';
 
-if (!isset($_SESSION['login']) || !$_SESSION['login']) {
+if (!validateSession()) {
     header("Location: signin.php");
     exit();
 }
 connectDatabase();
-
 
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 

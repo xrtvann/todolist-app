@@ -1,6 +1,123 @@
 <?php
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/config.php';
+
+// Load environment variables
+if (!isset($_ENV['SESSION_ENCRYPT_KEY'])) {
+    loadENV();
+}
+
+// Security key for session data encryption
+$sessionKey = isset($_ENV['SESSION_ENCRYPT_KEY']) ? $_ENV['SESSION_ENCRYPT_KEY'] : 'default-key-change-in-production';
+
+// Function to encrypt session data
+function encryptSessionData($data)
+{
+    global $sessionKey;
+    $key = hash('sha256', $sessionKey);
+    $iv = openssl_random_pseudo_bytes(16);
+    $encrypted = openssl_encrypt($data, 'AES-256-CBC', $key, 0, $iv);
+    return base64_encode($iv . $encrypted);
+}
+
+// Function to decrypt session data
+function decryptSessionData($encryptedData)
+{
+    global $sessionKey;
+    $key = hash('sha256', $sessionKey);
+    $data = base64_decode($encryptedData);
+    $iv = substr($data, 0, 16);
+    $encrypted = substr($data, 16);
+    return openssl_decrypt($encrypted, 'AES-256-CBC', $key, 0, $iv);
+}
+
+// Function to set secure user session
+function setSecureUserSession($userId, $username, $fullName = null)
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $_SESSION['login'] = true;
+    $_SESSION['user_id_hash'] = encryptSessionData($userId);
+    $_SESSION['username_hash'] = encryptSessionData($username);
+    if ($fullName) {
+        $_SESSION['full_name_hash'] = encryptSessionData($fullName);
+    }
+    $_SESSION['session_token'] = hash('sha256', $userId . time()); // Additional security token
+}
+
+// Function to get current user ID from encrypted session
+function getCurrentUserId()
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['user_id_hash'])) {
+        return null;
+    }
+
+    return decryptSessionData($_SESSION['user_id_hash']);
+}
+
+// Function to get current username from encrypted session
+function getCurrentUsername()
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['username_hash'])) {
+        return null;
+    }
+
+    return decryptSessionData($_SESSION['username_hash']);
+}
+
+// Function to get current full name from encrypted session
+function getCurrentFullName()
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['full_name_hash'])) {
+        return getCurrentUsername(); // Fallback to username if full name not available
+    }
+
+    return decryptSessionData($_SESSION['full_name_hash']);
+}
+
+// Function to validate session integrity
+function validateSession()
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    return isset($_SESSION['login']) &&
+        $_SESSION['login'] &&
+        isset($_SESSION['user_id_hash']) &&
+        isset($_SESSION['username_hash']) &&
+        isset($_SESSION['session_token']);
+}
+
+// Function to clear secure session
+function clearSecureSession()
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    unset($_SESSION['login']);
+    unset($_SESSION['user_id_hash']);
+    unset($_SESSION['username_hash']);
+    unset($_SESSION['full_name_hash']);
+    unset($_SESSION['session_token']);
+    session_destroy();
+}
 
 function read($query)
 {
@@ -75,13 +192,20 @@ function delete($table, $field, $value)
     return mysqli_affected_rows($connection);
 }
 
-function pagination($table, $dataPerPage)
+function pagination($table, $dataPerPage, $userIdColumn = 'user_id')
 {
+    $userId = getCurrentUserId();
+    $whereClause = '';
 
-    $result = read("SELECT COUNT(*) as total FROM $table");
+    // Always filter by user_id for data isolation
+    if ($userId) {
+        $whereClause = " WHERE {$userIdColumn} = '{$userId}'";
+    }
+
+    $result = read("SELECT COUNT(*) as total FROM $table{$whereClause}");
     $amountOfData = $result[0]['total'];
-    $amountOfPage = ceil($amountOfData / $dataPerPage);
-    $currentPage = isset($_GET['p']) ? $_GET['p'] : 1;
+    $amountOfPage = max(1, ceil($amountOfData / $dataPerPage)); // Ensure at least 1 page
+    $currentPage = isset($_GET['p']) ? (int) $_GET['p'] : 1;
 
     if ($currentPage < 1) {
         $currentPage = 1;

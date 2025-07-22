@@ -22,41 +22,62 @@ function generateTaskID()
 
 function show($limit = 10, $offset = 0)
 {
-    $query = "SELECT task.*, category.name AS category_name FROM task INNER JOIN category ON task.category_id = category.id ORDER BY task.created_at DESC LIMIT $limit, $offset";
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return [];
+    }
+
+    $query = "SELECT task.*, category.name AS category_name 
+              FROM task 
+              INNER JOIN category ON task.category_id = category.id 
+              WHERE task.user_id = '$userId' 
+              ORDER BY task.created_at DESC 
+              LIMIT $offset, $limit";
     $tasks = read($query);
     return $tasks;
 }
 
 function store()
 {
-
     global $connection;
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return 0;
+    }
+
     if (isset($_POST['saveTask'])) {
         $id = htmlspecialchars($_POST['taskID']);
         $name = htmlspecialchars($_POST['taskName']);
         $taskCategory = htmlspecialchars($_POST['taskCategory']);
 
+        // Verify that the category belongs to the current user
+        $categoryCheck = read("SELECT id FROM category WHERE id = '$taskCategory' AND user_id = '$userId'");
+        if (empty($categoryCheck)) {
+            return 0; // Category doesn't belong to user
+        }
+
         $data = [
             'id' => $id,
             'name' => $name,
-            'category_id' => $taskCategory
+            'category_id' => $taskCategory,
+            'user_id' => $userId
         ];
 
         insert('task', $data);
 
         return mysqli_affected_rows($connection);
-
     }
 }
 
 function update()
 {
-
     global $connection;
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return 0;
+    }
 
     if (isset($_POST['saveChangesTask'])) {
-
-
         $taskID = htmlspecialchars($_POST['updateTaskID']);
         $newTaskName = htmlspecialchars($_POST['updateTaskName']);
         $newTaskCategory = htmlspecialchars($_POST['updateTaskCategory']);
@@ -65,11 +86,16 @@ function update()
             return 0;
         }
 
-        $checkQuery = "SELECT id FROM category WHERE name = '{$newTaskCategory}' AND id != '{$taskID}'";
-        $checkExisting = read($checkQuery);
+        // Verify task belongs to current user
+        $taskCheck = read("SELECT id FROM task WHERE id = '$taskID' AND user_id = '$userId'");
+        if (empty($taskCheck)) {
+            return 0; // Task doesn't belong to user
+        }
 
-        if (!empty($checkExisting)) {
-            return -1;
+        // Verify category belongs to current user
+        $categoryCheck = read("SELECT id FROM category WHERE id = '$newTaskCategory' AND user_id = '$userId'");
+        if (empty($categoryCheck)) {
+            return 0; // Category doesn't belong to user
         }
 
         $data = [
@@ -77,7 +103,7 @@ function update()
             'category_id' => $newTaskCategory
         ];
 
-        $condition = "id = '{$taskID}'";
+        $condition = "id = '{$taskID}' AND user_id = '{$userId}'";
 
         $result = edit('task', $data, $condition);
 
@@ -89,13 +115,18 @@ function update()
 function markDoneTask()
 {
     global $connection;
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return 0;
+    }
+
     $taskId = htmlspecialchars($_POST['doneTaskID']);
     if (empty($taskId)) {
         return 0;
     }
 
     $escapedTaskId = mysqli_real_escape_string($connection, $taskId);
-    $query = "UPDATE task SET status='done' WHERE id='{$escapedTaskId}'";
+    $query = "UPDATE task SET status='done' WHERE id='{$escapedTaskId}' AND user_id='{$userId}'";
     $result = mysqli_query($connection, $query);
 
     if (!$result) {
@@ -107,10 +138,15 @@ function markDoneTask()
 
 function destroy($taskID)
 {
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return false;
+    }
 
-    $checkID = read("SELECT id FROM task WHERE id = '$taskID'");
+    // Check if task belongs to current user
+    $checkID = read("SELECT id FROM task WHERE id = '$taskID' AND user_id = '$userId'");
 
-    if ($checkID === 0) {
+    if (empty($checkID)) {
         return false;
     }
 
@@ -121,16 +157,32 @@ function destroy($taskID)
 function searchTask($searchTerm, $dataPerPage = 10, $currentPage = 1)
 {
     global $connection;
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return [
+            'tasks' => [],
+            'pagination' => [
+                'totalRows' => 0,
+                'totalPages' => 0,
+                'currentPage' => 1,
+                'offset' => 0,
+                'dataPerPage' => $dataPerPage,
+                'amountOfData' => 0,
+                'amountOfPage' => 0
+            ],
+            'searchTerm' => $searchTerm
+        ];
+    }
 
     $searchTerm = trim($searchTerm);
     $dataPerPage = max(1, (int) $dataPerPage);
     $currentPage = max(1, (int) $currentPage);
 
-
     $escapedSearchTerm = mysqli_real_escape_string($connection, $searchTerm);
 
-    $searchCondition = "task.name LIKE '%{$escapedSearchTerm}%' 
-                        OR category.name LIKE '%{$escapedSearchTerm}%'";
+    $searchCondition = "(task.name LIKE '%{$escapedSearchTerm}%' 
+                        OR category.name LIKE '%{$escapedSearchTerm}%') 
+                        AND task.user_id = '{$userId}'";
 
     $countQuery = "SELECT COUNT(*) as total FROM task INNER JOIN category ON task.category_id = category.id WHERE {$searchCondition}";
     $countResult = read($countQuery);

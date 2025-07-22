@@ -1,7 +1,16 @@
 <?php
 
+session_start();
 require_once "../../config/database.php";
 require_once "../../utility/databaseUtility.php";
+
+// Validate session before processing request
+if (!validateSession()) {
+    http_response_code(401);
+    echo '<tr><td colspan="4" class="text-center py-4 text-red-500">Session expired. Please login again.</td></tr>';
+    exit;
+}
+
 // Get search parameter
 $searchInput = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
 $page = isset($_GET['page']) ? $_GET['page'] : '';
@@ -13,7 +22,7 @@ if ($page === 'category') {
     require_once "../../controller/categoryController.php";
     if (empty($searchInput)) {
         $pagination = pagination('category', $dataPerPage);
-        $categories = show($pagination['start'], $dataPerPage);
+        $categories = show($dataPerPage, $pagination['start']);
     } else {
         // Search categories
         $result = searchCategories($searchInput, $dataPerPage, $currentPage);
@@ -26,10 +35,14 @@ if ($page === 'category') {
         <tr>
             <td colspan="4" class="text-center py-12 text-gray-500">
                 <div class="flex flex-col items-center">
-                    <i class="fas fa-search text-4xl mb-3 text-gray-300"></i>
-                    <p class="text-lg font-medium">No categories found</p>
                     <?php if (!empty($searchInput)): ?>
+                        <i class="fas fa-search text-4xl mb-3 text-gray-300"></i>
+                        <p class="text-lg font-medium">No categories found</p>
                         <p class="text-sm">No results for "<?= htmlspecialchars($searchInput) ?>"</p>
+                    <?php else: ?>
+                        <i class="fas fa-folder-open text-4xl mb-3 text-gray-300"></i>
+                        <p class="text-lg font-medium">No categories found</p>
+                        <p class="text-sm">Start by creating your first category</p>
                     <?php endif; ?>
                 </div>
             </td>
@@ -102,23 +115,27 @@ if ($page === 'task') {
     require_once "../../controller/taskController.php";
     if (empty($searchInput)) {
         $pagination = pagination('task', $dataPerPage);
-        $tasks = show($pagination['start'], $dataPerPage);
+        $tasks = show($dataPerPage, $pagination['start']);
     } else {
         // Search tasks
         $result = searchTask($searchInput, $dataPerPage, $currentPage);
         $tasks = $result['tasks'];
     }
 
-    // Generate table rows - COPIED FROM views/pages/category.php
+    // Generate table rows - COPIED FROM views/pages/task.php
     if (empty($tasks)) {
         ?>
         <tr>
             <td colspan="6" class="text-center py-12 text-gray-500">
                 <div class="flex flex-col items-center">
-                    <i class="fas fa-search text-4xl mb-3 text-gray-300"></i>
-                    <p class="text-lg font-medium">No task found</p>
                     <?php if (!empty($searchInput)): ?>
+                        <i class="fas fa-search text-4xl mb-3 text-gray-300"></i>
+                        <p class="text-lg font-medium">No tasks found</p>
                         <p class="text-sm">No results for "<?= htmlspecialchars($searchInput) ?>"</p>
+                    <?php else: ?>
+                        <i class="fas fa-tasks text-4xl mb-3 text-gray-300"></i>
+                        <p class="text-lg font-medium">No tasks found</p>
+                        <p class="text-sm">Start by creating your first task</p>
                     <?php endif; ?>
                 </div>
             </td>

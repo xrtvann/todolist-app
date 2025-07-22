@@ -6,14 +6,14 @@ if (isset($_COOKIE['id']) && isset($_COOKIE['key'])) {
     $id = $_COOKIE['id'];
     $key = $_COOKIE['key'];
 
-    $result = read("SELECT username FROM users WHERE id = '$id'");
+    $result = read("SELECT id, username, full_name FROM users WHERE id = '$id'");
 
-    if ($key === hash('sha256', $result[0]['username'])) {
-        $_SESSION['login'] = true;
+    if (!empty($result) && $key === hash('sha256', $result[0]['username'])) {
+        setSecureUserSession($result[0]['id'], $result[0]['username'], $result[0]['full_name']);
     }
 }
 
-if (isset($_SESSION['login']) && $_SESSION['login']) {
+if (validateSession()) {
     header('Location: index.php');
     exit;
 }

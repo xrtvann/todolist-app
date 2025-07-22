@@ -25,39 +25,49 @@ function generateCategoryID()
 
 function show($limit = 10, $offset = 0)
 {
-    $query = "SELECT * FROM category ORDER BY created_at DESC LIMIT $limit, $offset";
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return [];
+    }
+
+    $query = "SELECT * FROM category WHERE user_id = '$userId' ORDER BY created_at DESC LIMIT $offset, $limit";
     $categories = read($query);
     return $categories;
 }
 
 function store()
 {
-
     global $connection;
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return 0;
+    }
+
     if (isset($_POST['saveCategory'])) {
         $id = htmlspecialchars($_POST['categoryID']);
         $name = htmlspecialchars($_POST['categoryName']);
 
         $data = [
             'id' => $id,
-            'name' => $name
+            'name' => $name,
+            'user_id' => $userId
         ];
 
         insert('category', $data);
 
         return mysqli_affected_rows($connection);
-
     }
 }
 
 function update()
 {
-
     global $connection;
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return 0;
+    }
 
     if (isset($_POST['saveChangesCategory'])) {
-
-
         $categoryID = htmlspecialchars($_POST['updateCategoryID']);
         $newCategoryName = htmlspecialchars($_POST['updateCategoryName']);
 
@@ -65,18 +75,27 @@ function update()
             return 0;
         }
 
-        $checkQuery = "SELECT id FROM category WHERE name = '{$newCategoryName}' AND id != '{$categoryID}'";
+        // Check if category belongs to current user and if name already exists for this user
+        $checkQuery = "SELECT id FROM category WHERE name = '{$newCategoryName}' AND user_id = '{$userId}' AND id != '{$categoryID}'";
         $checkExisting = read($checkQuery);
 
         if (!empty($checkExisting)) {
             return -1;
         }
 
+        // Verify category belongs to current user before updating
+        $ownershipQuery = "SELECT id FROM category WHERE id = '{$categoryID}' AND user_id = '{$userId}'";
+        $ownershipCheck = read($ownershipQuery);
+
+        if (empty($ownershipCheck)) {
+            return 0; // Category doesn't belong to user
+        }
+
         $data = [
             'name' => $newCategoryName
         ];
 
-        $condition = "id = '{$categoryID}'";
+        $condition = "id = '{$categoryID}' AND user_id = '{$userId}'";
 
         $result = edit('category', $data, $condition);
 
@@ -87,10 +106,15 @@ function update()
 
 function destroy($categoryID)
 {
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return false;
+    }
 
-    $checkID = read("SELECT id FROM category WHERE id = '$categoryID'");
+    // Check if category belongs to current user
+    $checkID = read("SELECT id FROM category WHERE id = '$categoryID' AND user_id = '$userId'");
 
-    if ($checkID === 0) {
+    if (empty($checkID)) {
         return false;
     }
 
@@ -101,16 +125,30 @@ function destroy($categoryID)
 function searchCategories($searchTerm, $dataPerPage = 10, $currentPage = 1)
 {
     global $connection;
+    $userId = getCurrentUserId();
+    if (!$userId) {
+        return [
+            'categories' => [],
+            'pagination' => [
+                'totalRows' => 0,
+                'totalPages' => 0,
+                'currentPage' => 1,
+                'offset' => 0,
+                'dataPerPage' => $dataPerPage,
+                'amountOfData' => 0,
+                'amountOfPage' => 0
+            ],
+            'searchTerm' => $searchTerm
+        ];
+    }
 
     $searchTerm = trim($searchTerm);
     $dataPerPage = max(1, (int) $dataPerPage);
     $currentPage = max(1, (int) $currentPage);
 
-
     $escapedSearchTerm = mysqli_real_escape_string($connection, $searchTerm);
 
- 
-    $searchCondition = "name LIKE '%{$escapedSearchTerm}%' OR id LIKE '%{$escapedSearchTerm}%'";
+    $searchCondition = "(name LIKE '%{$escapedSearchTerm}%' OR id LIKE '%{$escapedSearchTerm}%') AND user_id = '{$userId}'";
 
     $countQuery = "SELECT COUNT(*) as total FROM category WHERE {$searchCondition}";
     $countResult = read($countQuery);
