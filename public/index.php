@@ -102,6 +102,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: index.php?page=task");
         exit();
     }
+
+    // Handle PDF export
+    if ($page === 'report' && isset($_POST['export_pdf'])) {
+        require_once '../controller/reportController.php';
+
+        try {
+            exportToPDF();
+            exit(); // PDF export will handle the output
+        } catch (Exception $e) {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = 'PDF export failed: ' . $e->getMessage();
+        }
+
+        header("Location: index.php?page=report");
+        exit();
+    }
+
+    // Handle Excel export
+    if ($page === 'report' && isset($_POST['export_excel'])) {
+        require_once '../controller/reportController.php';
+
+        try {
+            exportToExcel();
+            exit(); // Excel export will handle the output
+        } catch (Exception $e) {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = 'Excel export failed: ' . $e->getMessage();
+        }
+
+        header("Location: index.php?page=report");
+        exit();
+    }
 }
 
 // handle delete action
