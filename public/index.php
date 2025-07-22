@@ -134,6 +134,141 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: index.php?page=report");
         exit();
     }
+
+    // Handle Settings form submissions
+    if ($page === 'settings') {
+        require_once '../controller/settingsController.php';
+
+        // Change Password
+        if (isset($_POST['change_password'])) {
+            $result = changePassword();
+
+            if ($result > 0) {
+                $_SESSION['alert_type'] = 'success';
+                $_SESSION['alert_message'] = 'Password changed successfully!';
+            } elseif ($result === -1) {
+                $_SESSION['alert_type'] = 'error';
+                $_SESSION['alert_message'] = 'New passwords do not match!';
+            } elseif ($result === -2) {
+                $_SESSION['alert_type'] = 'error';
+                $_SESSION['alert_message'] = 'Password must be at least 6 characters long!';
+            } elseif ($result === -3) {
+                $_SESSION['alert_type'] = 'error';
+                $_SESSION['alert_message'] = 'Current password is incorrect!';
+            } else {
+                $_SESSION['alert_type'] = 'error';
+                $_SESSION['alert_message'] = 'Failed to change password!';
+            }
+
+            header("Location: index.php?page=settings");
+            exit();
+        }
+
+        // Export User Data
+        if (isset($_POST['export_data'])) {
+            try {
+                exportUserData();
+                exit(); // Export will handle the output
+            } catch (Exception $e) {
+                $_SESSION['alert_type'] = 'error';
+                $_SESSION['alert_message'] = 'Data export failed: ' . $e->getMessage();
+            }
+
+            header("Location: index.php?page=settings");
+            exit();
+        }
+
+        // Clear Completed Tasks
+        if (isset($_POST['clear_completed'])) {
+            $result = clearCompletedTasks();
+
+            if ($result > 0) {
+                $_SESSION['alert_type'] = 'success';
+                $_SESSION['alert_message'] = "Successfully cleared $result completed tasks!";
+            } else {
+                $_SESSION['alert_type'] = 'info';
+                $_SESSION['alert_message'] = 'No completed tasks found to clear.';
+            }
+
+            header("Location: index.php?page=settings");
+            exit();
+        }
+
+        // Delete All Tasks
+        if (isset($_POST['delete_all_tasks'])) {
+            $result = deleteAllTasks();
+
+            if ($result > 0) {
+                $_SESSION['alert_type'] = 'success';
+                $_SESSION['alert_message'] = "Successfully deleted $result tasks!";
+            } else {
+                $_SESSION['alert_type'] = 'info';
+                $_SESSION['alert_message'] = 'No tasks found to delete.';
+            }
+
+            header("Location: index.php?page=settings");
+            exit();
+        }
+
+        // Delete All Data
+        if (isset($_POST['delete_all_data'])) {
+            $result = deleteAllCategories();
+
+            if ($result > 0) {
+                $_SESSION['alert_type'] = 'success';
+                $_SESSION['alert_message'] = 'All categories and tasks have been deleted successfully!';
+            } else {
+                $_SESSION['alert_type'] = 'info';
+                $_SESSION['alert_message'] = 'No data found to delete.';
+            }
+
+            header("Location: index.php?page=settings");
+            exit();
+        }
+
+        // Delete Account
+        if (isset($_POST['delete_account'])) {
+            $result = deleteUserAccount();
+
+            if ($result > 0) {
+                // Destroy session and redirect to sign-in page
+                session_destroy();
+                $_SESSION = array();
+                header("Location: signin.php?message=Account deleted successfully");
+                exit();
+            } else {
+                $_SESSION['alert_type'] = 'error';
+                $_SESSION['alert_message'] = 'Failed to delete account!';
+            }
+
+            header("Location: index.php?page=settings");
+            exit();
+        }
+    }
+
+    // Handle Profile form submissions
+    if ($page === 'profile') {
+        require_once '../controller/settingsController.php';
+
+        // Update Profile
+        if (isset($_POST['update_profile'])) {
+            $result = updateProfile();
+
+            if ($result > 0) {
+                $_SESSION['alert_type'] = 'success';
+                $_SESSION['alert_message'] = 'Profile updated successfully!';
+            } elseif ($result === -1) {
+                $_SESSION['alert_type'] = 'error';
+                $_SESSION['alert_message'] = 'Username already exists! Please choose a different username.';
+            } else {
+                $_SESSION['alert_type'] = 'error';
+                $_SESSION['alert_message'] = 'Failed to update profile!';
+            }
+
+            header("Location: index.php?page=profile");
+            exit();
+        }
+    }
 }
 
 // handle delete action
@@ -179,6 +314,7 @@ $pageTitles = [
     'category' => 'Category',
     'report' => 'Report',
     'settings' => 'Settings',
+    'profile' => 'Profile',
 ];
 $title = isset($pageTitles[$page]) ? $pageTitles[$page] : 'Todolist App';
 
@@ -213,7 +349,7 @@ if (!empty($alertType)) {
             <div class="flex-1 overflow-auto">
                 <?php
                 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
-                $allowed_pages = ['dashboard', 'task', 'category', 'report', 'settings', 'logout'];
+                $allowed_pages = ['dashboard', 'task', 'category', 'report', 'settings', 'logout', 'profile'];
 
                 if (in_array($page, $allowed_pages)) {
                     include("../views/pages/" . $page . ".php");
