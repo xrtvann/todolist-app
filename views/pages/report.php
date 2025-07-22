@@ -21,28 +21,26 @@ $displayName = $currentFullName ? $currentFullName : $currentUsername;
 ?>
 
 <main class="p-6">
-    <div class="flex justify-between items-start mb-6">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
         <div class="title">
             <h1 class="text-2xl font-semibold mb-2">Reports & Analytics</h1>
             <p>Comprehensive overview of your productivity and task management performance.</p>
         </div>
 
         <!-- Export Buttons -->
-        <div class="flex gap-3">
+        <div class="flex gap-3 flex-shrink-0">
             <button onclick="exportPDF()"
                 class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors duration-200">
                 <i class="fas fa-file-pdf mr-2"></i>
-                Export PDF
+                PDF Report
             </button>
             <button onclick="exportExcel()"
                 class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors duration-200">
                 <i class="fas fa-file-excel mr-2"></i>
-                Export Excel
+                Excel Report
             </button>
         </div>
-    </div>
-
-    <!-- Key Metrics Cards -->
+    </div> <!-- Key Metrics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Tasks -->
         <div class="bg-white rounded-lg shadow p-6">
@@ -146,7 +144,8 @@ $displayName = $currentFullName ? $currentFullName : $currentUsername;
                                 <div class="border border-gray-200 rounded-lg p-4">
                                     <div class="flex items-center justify-between mb-2">
                                         <h4 class="text-sm font-medium text-gray-900">
-                                            <?= htmlspecialchars($category['category_name']) ?></h4>
+                                            <?= htmlspecialchars($category['category_name']) ?>
+                                        </h4>
                                         <div class="text-right">
                                             <p class="text-sm text-gray-600">
                                                 <?= $category['completed_tasks'] ?>/<?= $category['total_tasks'] ?> completed
@@ -235,7 +234,8 @@ $displayName = $currentFullName ? $currentFullName : $currentUsername;
                                     </div>
                                     <div class="flex-1">
                                         <p class="text-sm font-medium text-gray-900">
-                                            <?= htmlspecialchars($category['category_name']) ?></p>
+                                            <?= htmlspecialchars($category['category_name']) ?>
+                                        </p>
                                         <p class="text-xs text-gray-500">
                                             <?= $category['completion_percentage'] ?>% complete • <?= $category['total_tasks'] ?>
                                             tasks
@@ -270,7 +270,8 @@ $displayName = $currentFullName ? $currentFullName : $currentUsername;
                                     </div>
                                     <div class="flex-1">
                                         <p class="text-sm font-medium text-gray-900">Created:
-                                            <?= htmlspecialchars($activity['task_name']) ?></p>
+                                            <?= htmlspecialchars($activity['task_name']) ?>
+                                        </p>
                                         <p class="text-xs text-gray-500">
                                             <?= htmlspecialchars($activity['category_name']) ?> • <?= $timeAgo ?>
                                         </p>
@@ -291,6 +292,71 @@ $displayName = $currentFullName ? $currentFullName : $currentUsername;
 
 <script>
     function exportPDF() {
+        // Show options for preview or download
+        Swal.fire({
+            title: 'PDF Export Options',
+            text: 'Would you like to preview the PDF first or download it directly?',
+            icon: 'question',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonColor: '#dc2626',
+            denyButtonColor: '#059669',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: '<i class="fas fa-eye mr-2"></i>Preview First',
+            denyButtonText: '<i class="fas fa-download mr-2"></i>Download Now',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Preview mode
+                previewPDF();
+            } else if (result.isDenied) {
+                // Direct download
+                downloadPDF();
+            }
+        });
+    }
+
+    function previewPDF() {
+        // Show loading alert
+        Swal.fire({
+            title: 'Generating PDF Preview...',
+            text: 'Please wait while we prepare your report preview',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Create form and submit for PDF preview
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = window.location.href;
+        form.target = '_blank'; // Open in new tab
+
+        const exportInput = document.createElement('input');
+        exportInput.type = 'hidden';
+        exportInput.name = 'export_pdf';
+        exportInput.value = '1';
+
+        const previewInput = document.createElement('input');
+        previewInput.type = 'hidden';
+        previewInput.name = 'preview_mode';
+        previewInput.value = '1';
+
+        form.appendChild(exportInput);
+        form.appendChild(previewInput);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+
+        // Close loading alert
+        setTimeout(() => {
+            Swal.close();
+        }, 1000);
+    }
+
+    function downloadPDF() {
         // Show loading alert
         Swal.fire({
             title: 'Generating PDF...',
@@ -302,7 +368,7 @@ $displayName = $currentFullName ? $currentFullName : $currentUsername;
             }
         });
 
-        // Create form and submit for PDF export
+        // Create form and submit for PDF download
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = window.location.href;
@@ -315,9 +381,80 @@ $displayName = $currentFullName ? $currentFullName : $currentUsername;
         form.appendChild(input);
         document.body.appendChild(form);
         form.submit();
+        document.body.removeChild(form);
+
+        // Close loading alert
+        setTimeout(() => {
+            Swal.close();
+        }, 2000);
     }
 
     function exportExcel() {
+        // Show options for preview or download
+        Swal.fire({
+            title: 'Excel Export Options',
+            text: 'Would you like to preview the Excel content first or download it directly?',
+            icon: 'question',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonColor: '#16a34a',
+            denyButtonColor: '#059669',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: '<i class="fas fa-eye mr-2"></i>Preview Content',
+            denyButtonText: '<i class="fas fa-download mr-2"></i>Download Now',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Preview mode
+                previewExcel();
+            } else if (result.isDenied) {
+                // Direct download
+                downloadExcel();
+            }
+        });
+    }
+
+    function previewExcel() {
+        // Show loading alert
+        Swal.fire({
+            title: 'Generating Excel Preview...',
+            text: 'Please wait while we prepare your report preview',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Create form and submit for Excel preview
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = window.location.href;
+        form.target = '_blank'; // Open in new tab
+
+        const exportInput = document.createElement('input');
+        exportInput.type = 'hidden';
+        exportInput.name = 'export_excel';
+        exportInput.value = '1';
+
+        const previewInput = document.createElement('input');
+        previewInput.type = 'hidden';
+        previewInput.name = 'preview_mode';
+        previewInput.value = '1';
+
+        form.appendChild(exportInput);
+        form.appendChild(previewInput);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+
+        // Close loading alert
+        setTimeout(() => {
+            Swal.close();
+        }, 1000);
+    }
+
+    function downloadExcel() {
         // Show loading alert
         Swal.fire({
             title: 'Generating Excel...',
@@ -329,7 +466,7 @@ $displayName = $currentFullName ? $currentFullName : $currentUsername;
             }
         });
 
-        // Create form and submit for Excel export
+        // Create form and submit for Excel download
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = window.location.href;
@@ -342,5 +479,11 @@ $displayName = $currentFullName ? $currentFullName : $currentUsername;
         form.appendChild(input);
         document.body.appendChild(form);
         form.submit();
+        document.body.removeChild(form);
+
+        // Close loading alert
+        setTimeout(() => {
+            Swal.close();
+        }, 2000);
     }
 </script>

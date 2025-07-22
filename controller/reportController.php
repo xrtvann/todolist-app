@@ -121,13 +121,13 @@ function getMonthlyTrend()
 
     $query = "SELECT 
                 DATE_FORMAT(created_at, '%Y-%m') as month,
-                DATE_FORMAT(MIN(created_at), '%M %Y') as month_name,
+                DATE_FORMAT(created_at, '%M %Y') as month_name,
                 COUNT(*) as tasks_created,
                 SUM(CASE WHEN status = 'done' THEN 1 ELSE 0 END) as tasks_completed
               FROM task 
               WHERE user_id = '$userId' 
                 AND created_at >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)
-              GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+              GROUP BY DATE_FORMAT(created_at, '%Y-%m'), DATE_FORMAT(created_at, '%M %Y')
               ORDER BY month DESC";
 
     return read($query);
@@ -384,9 +384,10 @@ function exportToPDF()
     // Write HTML to PDF
     $mpdf->WriteHTML($html);
 
-    // Output PDF
+    // Output PDF - check if preview mode
     $filename = 'Task_Report_' . date('Y-m-d_H-i-s') . '.pdf';
-    $mpdf->Output($filename, 'D'); // 'D' for download
+    $mode = isset($_POST['preview_mode']) && $_POST['preview_mode'] == '1' ? 'I' : 'D';
+    $mpdf->Output($filename, $mode); // 'I' for inline preview, 'D' for download
 }
 
 /**
@@ -513,6 +514,13 @@ function exportToExcel()
     // Create writer and output file
     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
 
+    // Check if preview mode (show HTML preview instead of downloading Excel)
+    if (isset($_POST['preview_mode']) && $_POST['preview_mode'] == '1') {
+        // Generate HTML preview of Excel content
+        exportExcelPreview($stats, $categoryBreakdown, $monthlyTrend, $topCategories);
+        return;
+    }
+
     // Set headers for download
     $filename = 'Task_Report_' . date('Y-m-d_H-i-s') . '.xlsx';
 
@@ -521,5 +529,137 @@ function exportToExcel()
     header('Cache-Control: max-age=0');
 
     $writer->save('php://output');
+}
+
+/**
+ * Generate HTML preview of Excel content
+ */
+function exportExcelPreview($stats, $categoryBreakdown, $monthlyTrend, $topCategories)
+{
+    // Get user info
+    $currentFullName = getCurrentFullName();
+    $currentUsername = getCurrentUsername();
+    $displayName = $currentFullName ? $currentFullName : $currentUsername;
+
+    echo '<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Excel Report Preview</title>
+        <meta charset="UTF-8">
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+            .preview-container { max-width: 1200px; margin: 0 auto; }
+            .sheet-preview { background: white; margin-bottom: 30px; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .sheet-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #007bff; }
+            .excel-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            .excel-table th, .excel-table td { padding: 8px 12px; text-align: left; border: 1px solid #ddd; }
+            .excel-table th { background-color: #e2e8f0; font-weight: bold; }
+            .excel-table tr:nth-child(even) { background-color: #f8f9fa; }
+            .header-row { font-size: 16px; font-weight: bold; text-align: center; background-color: #f0f0f0; }
+            .metric-label { font-weight: bold; }
+            .text-center { text-align: center; }
+            .download-section { text-align: center; margin: 30px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .download-btn { display: inline-block; padding: 12px 24px; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 0 10px; }
+            .download-btn:hover { background: #218838; }
+            .cancel-btn { display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 0 10px; }
+            .cancel-btn:hover { background: #545b62; }
+        </style>
+    </head>
+    <body>
+        <div class="preview-container">
+            <h1 class="text-center">Excel Report Preview</h1>
+            <p class="text-center">This preview shows what your Excel file will contain</p>
+            
+            <!-- Overview Sheet Preview -->
+            <div class="sheet-preview">
+                <div class="sheet-title">📊 Sheet 1: Overview</div>
+                
+                <table class="excel-table">
+                    <tr class="header-row">
+                        <td colspan="2">Task Management Report</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-center">Generated for: ' . htmlspecialchars($displayName) . '</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-center">Date: ' . date('F j, Y') . '</td>
+                    </tr>
+                    <tr><td colspan="2"></td></tr>
+                    <tr>
+                        <th colspan="2">Key Metrics</th>
+                    </tr>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                    </tr>';
+
+    $metricsData = [
+        ['Total Tasks', $stats['totalTasks']],
+        ['Total Categories', $stats['totalCategories']],
+        ['Completed Tasks', $stats['completedTasks']],
+        ['Pending Tasks', $stats['pendingTasks']],
+        ['Completion Rate', $stats['completionRate'] . '%'],
+        ['Tasks This Month', $stats['tasksThisMonth']],
+        ['Tasks Completed This Month', $stats['tasksCompletedThisMonth']],
+        ['Average Tasks per Category', $stats['averageTasksPerCategory']]
+    ];
+
+    foreach ($metricsData as $metric) {
+        echo '<tr>
+            <td class="metric-label">' . htmlspecialchars($metric[0]) . '</td>
+            <td>' . htmlspecialchars($metric[1]) . '</td>
+        </tr>';
+    }
+
+    echo '</table>
+            </div>
+            
+            <!-- Category Breakdown Sheet Preview -->
+            <div class="sheet-preview">
+                <div class="sheet-title">📁 Sheet 2: Category Breakdown</div>
+                
+                <table class="excel-table">
+                    <tr class="header-row">
+                        <td colspan="5">Category Performance</td>
+                    </tr>
+                    <tr><td colspan="5"></td></tr>
+                    <tr>
+                        <th>Category Name</th>
+                        <th>Total Tasks</th>
+                        <th>Completed Tasks</th>
+                        <th>Pending Tasks</th>
+                        <th>Completion Rate (%)</th>
+                    </tr>';
+
+    if (!empty($categoryBreakdown)) {
+        foreach ($categoryBreakdown as $category) {
+            echo '<tr>
+                <td>' . htmlspecialchars($category['category_name']) . '</td>
+                <td class="text-center">' . $category['total_tasks'] . '</td>
+                <td class="text-center">' . $category['completed_tasks'] . '</td>
+                <td class="text-center">' . $category['pending_tasks'] . '</td>
+                <td class="text-center">' . ($category['completion_percentage'] ?? 0) . '</td>
+            </tr>';
+        }
+    } else {
+        echo '<tr><td colspan="5" class="text-center">No categories found</td></tr>';
+    }
+
+    echo '</table>
+            </div>
+            
+            <!-- Download Section -->
+            <div class="download-section">
+                <h3>Ready to Download?</h3>
+                <p>The Excel file will contain all the data shown above in a professional spreadsheet format with multiple sheets.</p>
+                <form method="POST" style="display: inline;">
+                    <input type="hidden" name="export_excel" value="1">
+                    <button type="submit" class="download-btn">📥 Download Excel File</button>
+                </form>
+                <a href="?page=report" class="cancel-btn">❌ Cancel</a>
+            </div>
+        </div>
+    </body>
+    </html>';
 }
 ?>
