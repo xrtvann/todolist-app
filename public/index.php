@@ -1,4 +1,9 @@
 <?php
+// Prevent browser caching
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -257,6 +262,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($result > 0) {
                 $_SESSION['alert_type'] = 'success';
                 $_SESSION['alert_message'] = 'Profile updated successfully!';
+                // Set a flag to indicate profile was updated
+                $_SESSION['profile_updated'] = time();
             } elseif ($result === -1) {
                 $_SESSION['alert_type'] = 'error';
                 $_SESSION['alert_message'] = 'Username already exists! Please choose a different username.';
@@ -265,7 +272,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['alert_message'] = 'Failed to update profile!';
             }
 
-            header("Location: index.php?page=profile");
+            // Add timestamp to prevent browser caching
+            header("Location: index.php?page=profile&t=" . time());
             exit();
         }
     }
@@ -342,8 +350,8 @@ if (!empty($alertType)) {
 <body class="font-poppins bg-gray-50">
     <div class="flex min-h-screen">
         <?php include('../views/templates/sidebar.php'); ?>
-        <div id="mainContent" class="flex-1 flex flex-col h-screen">
-            <div class="sticky top-0 bg-white shadow">
+        <div id="mainContent" class="flex-1 flex flex-col h-screen lg:ml-0">
+            <div class="sticky top-0 bg-white shadow z-30">
                 <?php include('../views/templates/navbar.php'); ?>
             </div>
             <div class="flex-1 overflow-auto">
@@ -367,9 +375,28 @@ if (!empty($alertType)) {
     <script src="./js/app.js"></script>
 
     <script>
+        // Check for profile updates and refresh navbar if needed
+        <?php if (isset($_SESSION['profile_updated'])): ?>
+            // Profile was updated, refresh navbar data
+            localStorage.setItem('profile_updated', '<?= $_SESSION['profile_updated'] ?>');
+            <?php unset($_SESSION['profile_updated']); ?>
+        <?php endif; ?>
+
+        // Listen for profile updates from other tabs
+        window.addEventListener('storage', function (e) {
+            if (e.key === 'profile_updated') {
+                // Profile was updated in another tab, reload current page
+                window.location.reload();
+            }
+        });
+
         <?php if (!empty($alertType) && !empty($alertMessage)): ?>
             <?php if ($alertType === 'success'): ?>
                 showSuccessAlert('Success', <?= json_encode($alertMessage) ?>);
+            <?php elseif ($alertType === 'error'): ?>
+                showErrorAlert('Error', <?= json_encode($alertMessage) ?>);
+            <?php elseif ($alertType === 'info'): ?>
+                showInfoAlert('Info', <?= json_encode($alertMessage) ?>);
             <?php endif; ?>
         <?php endif; ?>
     </script>

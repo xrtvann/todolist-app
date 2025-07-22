@@ -1,12 +1,15 @@
 <?php
 // Get current user info from secure session
 $currentFullName = getCurrentFullName();
+$currentUsername = getCurrentUsername();
+$displayName = $currentFullName ? $currentFullName : $currentUsername;
+
 $userInitials = '';
-if ($currentFullName) {
-    $nameParts = explode(' ', $currentFullName);
+if ($displayName) {
+    $nameParts = explode(' ', $displayName);
     $userInitials = strtoupper(substr($nameParts[0], 0, 1));
     if (count($nameParts) > 1) {
-        $userInitials .= strtoupper(substr($nameParts[count($nameParts) - 1], 0, 1));
+        $userInitials .= strtoupper(substr($nameParts[1], 0, 1));
     }
 }
 ?>
@@ -14,9 +17,10 @@ if ($currentFullName) {
     <nav class="flex items-center justify-between bg-white p-4 shadow-sm">
         <div class="left-menu flex items-center">
             <div class="toggle-sidebar">
-                <button id="toggleSidebar" class="text-gray-500 hover:text-gray-700 focus:outline-none"
+                <button id="toggleSidebar"
+                    class="p-2 text-gray-500 hover:text-gray-800 rounded-md focus:outline-none transition-colors duration-200"
                     onclick="toggleSidebar()">
-                    <i class="fa-solid fa-bars text-2xl"></i>
+                    <i class="fa-solid fa-bars text-xl transition-colors duration-200"></i>
                 </button>
             </div>
         </div>
@@ -26,9 +30,9 @@ if ($currentFullName) {
             id="userMenuButton" onclick="toggleUserMenu()">
             <div
                 class="name-profile bg-grey-200 rounded-full border-1 border-gray-300 w-7 h-7 flex items-center justify-center">
-                <p class="font-semibold text-sm"><?= htmlspecialchars($userInitials) ?></p>
+                <p class="font-semibold text-sm" id="userInitials"><?= htmlspecialchars($userInitials) ?></p>
             </div>
-            <p class="text-xs font-semibold text-black"><?= htmlspecialchars($currentFullName) ?></p>
+            <p class="text-xs font-semibold text-black" id="userDisplayName"><?= htmlspecialchars($displayName) ?></p>
         </div>
     </nav>
 

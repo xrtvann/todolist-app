@@ -84,10 +84,17 @@ function getCurrentFullName()
     }
 
     if (!isset($_SESSION['full_name_hash'])) {
-        return getCurrentUsername(); // Fallback to username if full name not available
+        return null; // Return null if no full name is set
     }
 
-    return decryptSessionData($_SESSION['full_name_hash']);
+    $fullName = decryptSessionData($_SESSION['full_name_hash']);
+
+    // Return null if full name is empty or false (decryption failed)
+    if (empty($fullName) || $fullName === false) {
+        return null;
+    }
+
+    return $fullName;
 }
 
 // Function to validate session integrity

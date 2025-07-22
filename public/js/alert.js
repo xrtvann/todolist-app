@@ -35,3 +35,13 @@ showErrorAlert = (title, message) => {
     confirmButtonText: "Try Again",
   });
 };
+
+showInfoAlert = (title, message) => {
+  Swal.fire({
+    icon: "info",
+    title: title,
+    text: message,
+    confirmButtonColor: "#3b82f6",
+    confirmButtonText: "OK",
+  });
+};

@@ -66,8 +66,13 @@ function updateProfile()
 
     if ($result > 0) {
         // Update session variables with new encrypted values
-        $_SESSION['username_hash'] = hash('sha256', $username . session_id());
-        $_SESSION['full_name_hash'] = hash('sha256', $fullName . session_id());
+        $_SESSION['username_hash'] = encryptSessionData($username);
+        if (!empty($fullName)) {
+            $_SESSION['full_name_hash'] = encryptSessionData($fullName);
+        } else {
+            // Remove full_name_hash if full name is empty
+            unset($_SESSION['full_name_hash']);
+        }
     }
 
     return $result;
