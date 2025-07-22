@@ -8,14 +8,16 @@ This is a **multi-user PHP ToDo application** with a **page-based MVC architectu
 - **User Isolation**: All data (categories/tasks) are filtered by `user_id` from session
 - **Global Connection**: Uses `global $connection` pattern throughout controllers
 - **ID Generation**: Custom prefixed IDs (`CTRGY-001`, `TSK-001`) generated in controllers
+- **Encrypted Sessions**: User data stored in encrypted session variables for security
 
 ## Critical Patterns
 
 ### Database Layer (`utility/databaseUtility.php`)
 
 - **CRUD Functions**: `read()`, `insert()`, `edit()`, `delete()` - always use these, never raw mysqli
-- **User Filtering**: `getCurrentUserId()` gets session user, `pagination()` accepts `$userIdColumn` parameter
+- **User Filtering**: `getCurrentUserId()` gets session user, `pagination()` ALWAYS filters by `user_id` by default
 - **Escape Everything**: Always `mysqli_real_escape_string()` user inputs
+- **Pagination**: Fixed parameter order: `show($limit, $offset)` and `LIMIT $offset, $limit` in SQL
 
 ### Controller Pattern
 
@@ -30,13 +32,23 @@ function store() {
     insert('table', $data);
     return mysqli_affected_rows($connection);
 }
+
+// Show function pattern:
+function show($limit = 10, $offset = 0) {
+    $userId = getCurrentUserId();
+    if (!$userId) return [];
+
+    $query = "SELECT * FROM table WHERE user_id = '$userId' ORDER BY created_at DESC LIMIT $offset, $limit";
+    return read($query);
+}
 ```
 
-### Authentication Flow
+### Authentication & Security
 
-- **Session Keys**: `$_SESSION['login']`, `$_SESSION['user_id']`, `$_SESSION['username']`
-- **Session Guards**: Every page checks `$_SESSION['login']` in `index.php`
-- **User Context**: Controllers use `getCurrentUserId()` for data isolation
+- **Encrypted Sessions**: `$_SESSION['user_id_hash']`, `$_SESSION['username_hash']`, `$_SESSION['full_name_hash']`
+- **Session Validation**: `validateSession()` checks integrity of encrypted session data
+- **User Context**: Always use `getCurrentUserId()`, `getCurrentUsername()`, `getCurrentFullName()`
+- **Session Guards**: Every page checks `validateSession()` in `index.php`
 
 ## Live Search Implementation
 
@@ -49,7 +61,35 @@ $("#table-body").load(
 );
 ```
 
-**Backend**: `public/ajax/liveSearch.php` handles both category and task search, returns HTML table rows
+**Backend**: `public/ajax/liveSearch.php` handles both category and task search, returns HTML table rows with empty state handling
+
+## Empty State & Pagination Patterns
+
+**Empty State Handling**: All tables include empty state messages:
+
+```php
+<?php if (empty($items)): ?>
+    <tr>
+        <td colspan="4" class="text-center py-12 text-gray-500">
+            <div class="flex flex-col items-center">
+                <i class="fas fa-folder-open text-4xl mb-3 text-gray-300"></i>
+                <p class="text-lg font-medium">No items found</p>
+                <p class="text-sm">Start by creating your first item</p>
+            </div>
+        </td>
+    </tr>
+<?php endif; ?>
+```
+
+**Conditional Pagination**: Only show pagination when data exists:
+
+```php
+<?php if (!empty($items) && $pagination['amountOfData'] > 0): ?>
+    <div class="pagination-wrapper">
+        <!-- pagination controls -->
+    </div>
+<?php endif; ?>
+```
 
 ## Page Routing System
 
@@ -72,31 +112,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 **User Isolation**: Every table has `user_id` foreign key
 
 - `users(id, username, password, full_name)`
-- `category(id, name, user_id)`
-- `task(id, name, status, category_id, user_id)`
-
-**Migration**: Use `migrate.php` for existing databases, `database.sql` for fresh installs
+- `category(id, name, user_id, created_at)`
+- `task(id, name, status, category_id, user_id, created_at)`
 
 ## Frontend Patterns
 
+**CSS Framework**: Tailwind CSS v4.1.11 with custom build pipeline
+**Icons**: FontAwesome 6.7.2 included via npm
 **Modals**: Custom modal system with `showEditModal()`, `showConfirmationDelete()` functions
 **Alerts**: SweetAlert2 via session flash messages (`$_SESSION['alert_type']`, `$_SESSION['alert_message']`)
 **Dropdowns**: Custom dropdown components with `data-dropdown` attributes
 
+## Build Commands
+
+```bash
+# Development with file watching
+npm run dev
+
+# Production build (minified)
+npm run build
+```
+
 ## Key Files to Understand
 
 - `public/index.php` - Main router and form handler
-- `utility/databaseUtility.php` - All database operations
-- `controller/categoryController.php` - CRUD pattern example
-- `public/ajax/liveSearch.php` - AJAX search implementation
-- `views/pages/` - Page templates with embedded PHP
+- `utility/databaseUtility.php` - All database operations, user sessions, pagination
+- `controller/categoryController.php` - CRUD pattern example with user isolation
+- `public/ajax/liveSearch.php` - AJAX search with empty state handling
+- `views/pages/` - Page templates with embedded PHP and empty states
+- `config/database.php` - Database connection with environment variables
 
+## Environment Setup
 
-# Environment setup
+```bash
+# Copy environment configuration
 cp .env.example .env
+
+# Install dependencies
+npm install
+
+# Build CSS
+npm run build
 ```
 
 ## Critical Dependencies
+
+- **Tailwind CSS**: Custom build pipeline for styling
+- **SweetAlert2**: User notifications and confirmations
+- **FontAwesome**: Icon library
+- **MySQL**: Database with user isolation patterns
 
 - **Session Management**: Must call `session_start()` in every file
 - **Database Connection**: `connectDatabase()` from `config/database.php`
