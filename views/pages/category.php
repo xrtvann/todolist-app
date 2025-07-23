@@ -203,7 +203,7 @@ $categories = show($dataPerPage, $start);
 
     <div class="fixed inset-0 z-50 flex items-center justify-center hidden" id="add-category-modal">
         <div class="absolute inset-0 bg-black opacity-60"></div>
-        <div class="modal relative w-2xl rounded-md">
+        <div class="modal relative w-full max-w-[350px] lg:max-w-2xl mx-auto max-h-screen rounded-md">
             <div class="modal-title bg-slate-100 px-4 py-2.5 flex justify-center items-center rounded-t-md">
                 <h2 class="text-xl font-semibold">Add New Category</h2>
             </div>
@@ -244,7 +244,7 @@ $categories = show($dataPerPage, $start);
 
     <div class="fixed inset-0 z-50 flex items-center justify-center hidden" id="update-category-modal">
         <div class="absolute inset-0 bg-black opacity-60"></div>
-        <div class="modal relative w-2xl rounded-md">
+        <div class="modal relative w-full max-w-[350px] lg:max-w-2xl mx-auto max-h-screen rounded-md">
             <div class="modal-title bg-slate-100 px-4 py-2.5 flex justify-center items-center rounded-t-md">
                 <h2 class="text-xl font-semibold">Update Category</h2>
             </div>

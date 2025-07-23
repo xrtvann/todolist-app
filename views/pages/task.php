@@ -63,7 +63,8 @@ $categories = $result;
             </div>
         </div>
         <div class="table-content" id="table-container">
-            <div class="max-h-[293px] max-w-[280px] lg:max-w-full overflow-x-auto border border-gray-200 rounded-sm shadow-sm">
+            <div
+                class="max-h-[293px] max-w-[280px] lg:max-w-full overflow-x-auto border border-gray-200 rounded-sm shadow-sm">
                 <table class="w-full min-w-max">
                     <thead
                         class="table-header-group bg-slate-100 text-sm text-semibold text-gray-700 sticky top-0 z-10">
@@ -242,7 +243,7 @@ $categories = $result;
 
     <div class="fixed inset-0 z-50 items-center justify-center flex hidden" id="add-task-modal">
         <div class="absolute inset-0 bg-black opacity-60"></div>
-        <div class="modal relative w-2xl rounded-md">
+        <div class="modal relative w-full max-w-[350px] lg:max-w-2xl mx-auto max-h-screen rounded-md">
             <div class="modal-title bg-slate-100 px-4 py-2.5 flex justify-center items-center rounded-t-md">
                 <h2 class="text-xl font-semibold">Add New Task</h2>
             </div>
@@ -306,7 +307,7 @@ $categories = $result;
 
     <div class="fixed inset-0 z-50 items-center justify-center flex hidden" id="update-task-modal">
         <div class="absolute inset-0 bg-black opacity-60"></div>
-        <div class="modal relative w-2xl rounded-md">
+        <div class="modal relative w-full max-w-[350px] lg:max-w-2xl mx-auto max-h-screen rounded-md">
             <div class="modal-title bg-slate-100 px-4 py-2.5 flex justify-center items-center rounded-t-md">
                 <h2 class="text-xl font-semibold">Update Task</h2>
             </div>
