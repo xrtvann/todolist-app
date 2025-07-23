@@ -35,14 +35,14 @@ $categories = $result;
     </div>
 
     <div class="container mt-6 bg-white rounded shadow py-6 px-6">
-        <div class="top-table mb-5 flex justify-between items-center">
+        <div class="top-table mb-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="search-box flex">
                 <form action="" method="post" class="relative">
                     <!-- Search input -->
                     <i class="fa fa-search absolute text-gray-400 top-2 left-2"></i>
                     <input data-search="livesearch" data-page="task" id="searchInputTask" name="searchInputTask"
                         type="text" placeholder="Search"
-                        class="border border-gray-300 py-1 px-8 rounded focus:border-gray-500 focus:outline focus:outline-gray-50">
+                        class="max-w-[180px] md:max-w-full border border-gray-300 py-1 px-8 rounded focus:border-gray-500 focus:outline focus:outline-gray-50">
                 </form>
 
                 <button
@@ -63,10 +63,8 @@ $categories = $result;
             </div>
         </div>
         <div class="table-content" id="table-container">
-
-            <div class="max-h-96 overflow-auto border border-gray-200 rounded-sm shadow-sm">
-                <table class="w-full">
-
+            <div class="max-h-[293px] max-w-[280px] lg:max-w-full overflow-x-auto border border-gray-200 rounded-sm shadow-sm">
+                <table class="w-full min-w-max">
                     <thead
                         class="table-header-group bg-slate-100 text-sm text-semibold text-gray-700 sticky top-0 z-10">
                         <tr class="table-row">
@@ -161,7 +159,7 @@ $categories = $result;
 
         <?php if (!empty($tasks) && $pagination['amountOfData'] > 0): ?>
             <div class="pagination-wrapper mt-6 py-4">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4">
                     <!-- Info pagination -->
                     <?php
                     if ($pagination['amountOfData'] > 0) {
