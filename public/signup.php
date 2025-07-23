@@ -26,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signUp'])) {
 </head>
 
 <body class="bg-gray-100 font-poppins">
-    <div class="w-full flex justify-center items-center min-h-screen">
-        <div class="sign-up-container w-110 bg-white shadow-md flex flex-col justify-center py-2 px-6 rounded-xl"
+    <div class="w-full flex justify-center items-center min-h-screen px-3 lg:px-0">
+        <div class="sign-up-container w-full max-w-full lg:w-110 bg-white shadow-md flex flex-col justify-center py-2 px-4 rounded-xl overflow-hidden"
             id="signUp">
             <div class="header pt-5 flex flex-col items-center">
                 <img src="https://img.icons8.com/fluency/96/000000/todo-list.png" alt="" class="w-13">

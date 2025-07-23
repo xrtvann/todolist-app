@@ -49,11 +49,12 @@ if (!empty($alertType)) {
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/96/000000/todo-list.png">
     <link rel="stylesheet" href="css/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../node_modules/sweetalert2/dist/sweetalert2.min.css">
+    
 </head>
 
 <body class="bg-gray-100 font-poppins">
-    <div class="w-full flex justify-center items-center min-h-screen">
-        <div class="sign-in-container w-110 bg-white shadow-md flex flex-col justify-center py-2 px-6 rounded-xl"
+    <div class="w-full flex justify-center items-center min-h-screen px-3 lg:px-0">
+        <div class="sign-in-container w-full max-w-full lg:w-110 bg-white shadow-md flex flex-col justify-center py-2 px-4 lg:px-6 rounded-xl overflow-hidden"
             id="signIn">
             <div class="header pt-5 flex flex-col items-center">
                 <img src="https://img.icons8.com/fluency/96/000000/todo-list.png" alt="" class="w-13">

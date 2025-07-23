@@ -123,6 +123,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 **Alerts**: SweetAlert2 via session flash messages (`$_SESSION['alert_type']`, `$_SESSION['alert_message']`)
 **Dropdowns**: Custom dropdown components with `data-dropdown` attributes
 
+### JavaScript Patterns
+
+- **Responsive Sidebar**: `toggleSidebar()` handles mobile/desktop breakpoints at 1024px
+- **User Menu**: `toggleUserMenu()` with outside-click dismissal
+- **SweetAlert Wrappers**: `showSuccessAlert()`, `showErrorAlert()`, `showConfirmationDelete()` in `alert.js`
+- **Task Categories**: `selectTaskCategory()` function handles category selection logic
+- **Mobile-First**: Sidebar starts hidden on mobile (`-translate-x-full` class)
+
 ## Build Commands
 
 ```bash
@@ -135,12 +143,16 @@ npm run build
 
 ## Key Files to Understand
 
-- `public/index.php` - Main router and form handler
-- `utility/databaseUtility.php` - All database operations, user sessions, pagination
-- `controller/categoryController.php` - CRUD pattern example with user isolation
-- `public/ajax/liveSearch.php` - AJAX search with empty state handling
-- `views/pages/` - Page templates with embedded PHP and empty states
+- `public/index.php` - Main router and form handler with POST-redirect-GET pattern
+- `utility/databaseUtility.php` - All database operations, user sessions, pagination, AES-256-CBC encryption
+- `controller/categoryController.php` - CRUD pattern example with user isolation and ID generation
+- `controller/dashboardController.php` - Statistics aggregation with `getDashboardStats()` function
+- `public/ajax/liveSearch.php` - AJAX search with empty state handling and session validation
+- `public/js/app.js` - Responsive sidebar logic and UI interactions
+- `public/js/alert.js` - SweetAlert2 wrapper functions for consistent notifications
+- `views/pages/` - Page templates with embedded PHP and comprehensive empty states
 - `config/database.php` - Database connection with environment variables
+- `exports/` - Directory for PDF/Excel export functionality (placeholder structure)
 
 ## Environment Setup
 
@@ -157,11 +169,16 @@ npm run build
 
 ## Critical Dependencies
 
-- **Tailwind CSS**: Custom build pipeline for styling
-- **SweetAlert2**: User notifications and confirmations
-- **FontAwesome**: Icon library
-- **MySQL**: Database with user isolation patterns
+- **Tailwind CSS**: Custom build pipeline for styling with `npm run dev`/`npm run build`
+- **SweetAlert2**: User notifications and confirmations via wrapper functions
+- **FontAwesome**: Icon library (6.7.2) with consistent icon patterns
+- **jQuery**: DOM manipulation for live search and AJAX interactions
+- **MySQL**: Database with user isolation patterns and AES-256-CBC session encryption
+
+## Development Workflow
 
 - **Session Management**: Must call `session_start()` in every file
 - **Database Connection**: `connectDatabase()` from `config/database.php`
 - **User Context**: `getCurrentUserId()` for all user-specific operations
+- **Form Processing**: POST-redirect-GET pattern prevents duplicate submissions
+- **Mobile Responsive**: 1024px breakpoint for sidebar behavior changes
