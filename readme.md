@@ -19,16 +19,76 @@
 
 ## ✨ Features
 
-- 🔐 **User Authentication** - Secure registration and login system with encrypted sessions
-- 📋 **Task Management** - Create, edit, delete, and mark tasks as complete
-- 🗂️ **Categories** - Organize tasks with custom categories
-- 🔍 **Live Search** - Real-time search across tasks and categories
-- 📊 **Dashboard** - Overview of your tasks and progress
-- 📱 **Responsive Design** - Works on desktop, tablet, and mobile
-- 🎨 **Modern Interface** - Clean and intuitive user experience
-- ⚡ **Fast Performance** - Smooth and responsive interactions
-- 🔒 **Enhanced Security** - AES-256-CBC encrypted session data and user isolation
-- 🛡️ **Data Protection** - User-scoped data access with proper authorization
+### 🔐 **Authentication & Security**
+
+- **Secure User Registration & Login** - Complete authentication system with encrypted sessions
+- **AES-256-CBC Encryption** - Enterprise-level session data encryption
+- **User Data Isolation** - Each user can only access their own data
+- **Remember Me Functionality** - Secure cookie-based persistent login
+- **Session Validation** - Multi-layer session integrity checks
+
+### 📋 **Task Management**
+
+- **Full CRUD Operations** - Create, read, update, and delete tasks
+- **Task Status Management** - Mark tasks as pending or completed
+- **Custom Task IDs** - Auto-generated prefixed IDs (TSK-001, TSK-002, etc.)
+- **Category Assignment** - Organize tasks with custom categories
+- **Date Tracking** - Automatic creation timestamps with formatted display
+
+### �️ **Category System**
+
+- **Category Management** - Create, edit, and delete task categories
+- **Category Icons** - Visual folder icons for better organization
+- **Category-Task Relationships** - Link tasks to specific categories
+- **Custom Category IDs** - Auto-generated prefixed IDs (CTRGY-001, etc.)
+
+### �🔍 **Search & Filtering**
+
+- **Live Search** - Real-time AJAX search across tasks and categories
+- **Instant Results** - Search results update as you type
+- **Responsive Search** - Optimized search experience on all devices
+- **Filter Options** - Advanced filtering capabilities (ready for expansion)
+
+### 📊 **Dashboard & Analytics**
+
+- **Statistics Overview** - View task completion statistics
+- **Progress Tracking** - Monitor your productivity over time
+- **Quick Actions** - Fast access to common operations
+- **Data Visualization** - Clean presentation of your task data
+
+### 📱 **Mobile-First Responsive Design**
+
+- **Fully Mobile Optimized** - Perfect experience on phones, tablets, and desktops
+- **Touch-Friendly Interface** - Large buttons and touch targets for mobile
+- **Horizontal Table Scrolling** - Smooth table navigation on small screens
+- **Responsive Modals** - Mobile-optimized add/edit forms
+- **Adaptive Layouts** - Content reflows beautifully across screen sizes
+- **Mobile Sidebar** - Collapsible navigation for mobile devices
+
+### 🎨 **Modern User Interface**
+
+- **Tailwind CSS Framework** - Custom-built responsive design system
+- **SweetAlert2 Integration** - Beautiful notifications and confirmations
+- **FontAwesome Icons** - Comprehensive icon library for better UX
+- **Hover Effects** - Smooth animations and interactive elements
+- **Loading States** - Visual feedback for user actions
+- **Empty States** - Helpful messages when no data is available
+
+### ⚡ **Performance & Optimization**
+
+- **AJAX-Powered** - Fast, seamless user interactions
+- **Optimized Database Queries** - Efficient pagination and data retrieval
+- **CSS Build Pipeline** - Optimized Tailwind CSS compilation
+- **Lazy Loading** - Efficient resource loading
+- **Caching Strategies** - Optimized session and data management
+
+### 🛡️ **Advanced Security Features**
+
+- **SQL Injection Protection** - Parameterized queries and input sanitization
+- **XSS Prevention** - Proper output encoding and validation
+- **CSRF Protection** - Secure form handling
+- **Environment Variables** - Secure configuration management
+- **User Authorization** - Role-based access control ready
 
 ---
 
@@ -41,36 +101,53 @@ todolist-app/
 │   ├── config.php             # General configuration
 │   └── database.php           # Database connection
 ├── 📁 controller/             # Business logic controllers
-│   ├── categoryController.php # Category operations
-│   └── taskController.php     # Task operations
-├── 📁 public/                 # Public files (entry point)
+│   ├── categoryController.php # Category CRUD operations
+│   ├── dashboardController.php# Dashboard statistics
+│   ├── reportController.php   # Report generation
+│   ├── settingsController.php # User settings management
+│   └── taskController.php     # Task CRUD operations
+├── 📁 exports/               # Export functionality
+│   ├── excel_export.php     # Excel export feature
+│   ├── pdf_export.php       # PDF export feature
+│   └── temp/                # Temporary export files
+├── 📁 public/                # Public files (entry point)
 │   ├── 📁 ajax/              # AJAX endpoints
-│   │   └── liveSearch.php    # Live search functionality
+│   │   ├── liveSearch.php    # Live search functionality
+│   │   └── updateProfile.php # Profile update handler
 │   ├── 📁 css/               # Stylesheets
-│   │   ├── style.css         # Main stylesheet
-│   │   └── fontawesome-free/ # FontAwesome icons
+│   │   ├── style.css         # Compiled Tailwind CSS
+│   │   └── fontawesome-free/ # FontAwesome 6.7.2 icons
 │   ├── 📁 js/                # JavaScript files
-│   │   ├── app.js            # Main application logic
-│   │   ├── alert.js          # SweetAlert configurations
+│   │   ├── app.js            # Responsive sidebar & UI logic
+│   │   ├── alert.js          # SweetAlert2 wrapper functions
 │   │   ├── auth.js           # Authentication scripts
-│   │   └── jquery.js         # jQuery utilities
-│   ├── index.php             # Main application entry
-│   ├── signin.php            # Login page
-│   └── signup.php            # Registration page
+│   │   ├── jquery.js         # jQuery utilities
+│   │   └── jquery-3.7.1.min.js # jQuery library
+│   ├── index.php             # Main application router
+│   ├── signin.php            # Mobile-optimized login page
+│   ├── signup.php            # Mobile-optimized registration
+│   └── logout.php            # Secure logout handler
+├── 📁 src/                   # Source files
+│   └── input.css             # Tailwind CSS source
 ├── 📁 utility/               # Helper utilities
-│   └── databaseUtility.php   # Database utility functions
+│   └── databaseUtility.php   # Database operations & encryption
 ├── 📁 views/                 # View templates
 │   ├── 📁 pages/             # Page views
-│   │   ├── category.php      # Category management page
-│   │   ├── dashboard.php     # Dashboard page
-│   │   ├── report.php        # Reports page
-│   │   ├── settings.php      # Settings page
-│   │   └── task.php          # Task management page
+│   │   ├── category.php      # Mobile-responsive category management
+│   │   ├── dashboard.php     # Dashboard with statistics
+│   │   ├── profile.php       # User profile management
+│   │   ├── report.php        # Reports and analytics
+│   │   ├── settings.php      # Application settings
+│   │   └── task.php          # Mobile-responsive task management
 │   └── 📁 templates/         # Reusable templates
-│       ├── navbar.php        # Navigation bar
-│       └── sidebar.php       # Sidebar navigation
-├── package.json              # Node.js dependencies
-└── readme.md                 # This file
+│       ├── navbar.php        # Responsive navigation bar
+│       └── sidebar.php       # Mobile-friendly sidebar
+├── 📁 .github/               # GitHub configuration
+│   └── copilot-instructions.md # AI coding agent guidance
+├── package.json              # Node.js dependencies for Tailwind
+├── composer.json             # PHP dependencies
+├── .env.example              # Environment configuration template
+└── readme.md                 # This comprehensive documentation
 ```
 
 ---
@@ -157,7 +234,20 @@ Before you begin, ensure you have the following installed:
    -- This adds user_id columns to category and task tables
    ```
 
-7. **Access the Application**
+7. **Install Dependencies & Build Assets**
+
+   ```bash
+   # Install Node.js dependencies for Tailwind CSS
+   npm install
+
+   # Build CSS for production
+   npm run build
+
+   # Or for development with file watching
+   npm run dev
+   ```
+
+8. **Access the Application**
    - Open your browser and navigate to:
      - **Local**: `http://localhost/todolist-app/public/`
      - **Laragon**: `http://todolist-app.test/public/`
@@ -237,6 +327,34 @@ For detailed security documentation, see [SECURITY.md](SECURITY.md)
 
 ---
 
+## 📱 Mobile Responsiveness Features
+
+This application is built with a **mobile-first approach**, ensuring an excellent experience across all devices:
+
+### 📱 **Mobile Optimization**
+
+- **Responsive Tables** - Horizontal scrolling for data-heavy tables on mobile
+- **Touch-Friendly Controls** - Buttons and inputs optimized for touch interaction (44px minimum)
+- **Mobile Modal Design** - Full-screen friendly modals with proper spacing
+- **Responsive Typography** - Text scales appropriately across devices
+- **Flexible Layouts** - Content adapts seamlessly from mobile to desktop
+
+### 🎯 **Screen Breakpoints**
+
+- **Mobile** (< 768px): Optimized for phones with stacked layouts
+- **Tablet** (768px - 1024px): Balanced layout for tablet devices
+- **Desktop** (> 1024px): Full-featured layout with sidebar navigation
+
+### 💡 **Mobile-Specific Features**
+
+- **Collapsible Sidebar** - Space-efficient navigation on mobile
+- **Horizontal Table Scroll** - Smooth table browsing on small screens
+- **Responsive Pagination** - Compact pagination controls for mobile
+- **Touch Gestures** - Optimized for swipe and tap interactions
+- **Mobile-First CSS** - Built with Tailwind CSS mobile-first utilities
+
+---
+
 ## 📱 Usage Guide
 
 ### 1. **Registration & Login**
@@ -268,34 +386,182 @@ For detailed security documentation, see [SECURITY.md](SECURITY.md)
 
 ## 🛠️ Technology Stack
 
-- **Backend**: PHP 7.4+
-- **Database**: MySQL 8.0+
-- **Frontend**: HTML5, CSS3, JavaScript
-- **UI Framework**: Tailwind CSS
-- **Icons**: FontAwesome
-- **Alerts**: SweetAlert2
+### **Backend Technologies**
+
+- **PHP 7.4+** - Server-side programming language
+- **MySQL 8.0+** - Relational database management
+- **MySQLi Extension** - Database connectivity and operations
+- **Session Management** - AES-256-CBC encrypted sessions
+
+### **Frontend Technologies**
+
+- **HTML5** - Modern markup language
+- **CSS3** - Advanced styling capabilities
+- **JavaScript ES6+** - Modern client-side scripting
+- **jQuery 3.7.1** - DOM manipulation and AJAX
+
+### **UI Framework & Design**
+
+- **Tailwind CSS v4.1.11** - Utility-first CSS framework with custom build
+- **FontAwesome 6.7.2** - Comprehensive icon library
+- **SweetAlert2** - Beautiful modal dialogs and notifications
+- **Responsive Design** - Mobile-first approach
+
+### **Development Tools**
+
+- **npm** - Package management for frontend dependencies
+- **Tailwind CLI** - CSS compilation and optimization
+- **Composer** - PHP dependency management (ready for expansion)
+- **Node.js** - Build tools and development workflow
+
+### **Security & Performance**
+
+- **AES-256-CBC Encryption** - Session data protection
+- **Prepared Statements** - SQL injection prevention
+- **CSRF Protection** - Cross-site request forgery prevention
+- **Input Sanitization** - XSS attack prevention
 
 ---
 
 ## 🐛 Troubleshooting
 
-- **Database connection error**:
+### **Common Issues & Solutions**
+
+#### Database Connection
+
+- **Error**: Database connection failed
+- **Solution**:
   - Check your `.env` file configuration
-  - Ensure database server is running
-  - Verify database name exists
-- **Environment file missing**: Copy `.env.example` to `.env` and configure it
-- **Permission issues**: Ensure proper file permissions on your web server
-- **Page not loading**: Make sure you're accessing through `/public/` directory
-- **Tables not created**: Check database credentials and permissions
+  - Ensure MySQL/MariaDB server is running
+  - Verify database name exists and credentials are correct
+  - Test connection: `mysql -u username -p database_name`
+
+#### Environment Configuration
+
+- **Error**: Environment file missing or invalid
+- **Solution**:
+  - Copy `.env.example` to `.env`
+  - Configure all required variables
+  - Ensure SESSION_ENCRYPT_KEY is exactly 32 characters
+
+#### CSS/JavaScript Issues
+
+- **Error**: Styles not loading or outdated
+- **Solution**:
+  - Run `npm install` to install dependencies
+  - Run `npm run build` to compile Tailwind CSS
+  - Clear browser cache (Ctrl+F5)
+  - Check console for JavaScript errors
+
+#### Mobile Responsiveness
+
+- **Error**: Layout broken on mobile devices
+- **Solution**:
+  - Ensure latest CSS is compiled (`npm run build`)
+  - Check viewport meta tag is present
+  - Test on actual devices, not just browser resize
+  - Verify Tailwind responsive classes are working
+
+#### Permission Issues
+
+- **Error**: File permission denied
+- **Solution**:
+  - Set proper permissions: `chmod 755` for directories, `chmod 644` for files
+  - Ensure web server has read access to all files
+  - Check ownership: `chown -R www-data:www-data` (Linux/Apache)
+
+#### Performance Issues
+
+- **Error**: Slow page loading
+- **Solution**:
+  - Enable PHP OPcache
+  - Optimize database queries
+  - Use browser caching
+  - Minify CSS/JS assets
+
+### **Advanced Debugging**
+
+```bash
+# Enable PHP error reporting (development only)
+# Add to php.ini or .htaccess:
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+# Check PHP extensions
+php -m | grep mysqli
+
+# Test database connection
+mysql -u root -p -e "SHOW DATABASES;"
+```
 
 ---
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+We welcome contributions to make this ToDo List app even better! Here's how you can help:
+
+### **Getting Started**
+
+1. **Fork the Repository**
+
+   ```bash
+   git clone https://github.com/your-username/todolist-app.git
+   cd todolist-app
+   ```
+
+2. **Create a Feature Branch**
+
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+
+3. **Install Dependencies**
+
+   ```bash
+   npm install
+   cp .env.example .env
+   # Configure your .env file
+   ```
+
+4. **Make Your Changes**
+
+   - Follow the existing code style and patterns
+   - Test your changes thoroughly
+   - Ensure mobile responsiveness
+   - Add appropriate comments
+
+5. **Test Your Changes**
+
+   ```bash
+   # Build CSS
+   npm run build
+
+   # Test on multiple devices/browsers
+   # Verify functionality works correctly
+   ```
+
+6. **Submit a Pull Request**
+   - Provide a clear description of your changes
+   - Include screenshots for UI changes
+   - Reference any related issues
+
+### **Contribution Guidelines**
+
+- 📝 **Code Style**: Follow existing PHP and JavaScript patterns
+- 📱 **Mobile First**: Ensure all changes work on mobile devices
+- 🔒 **Security**: Maintain security best practices
+- 🧪 **Testing**: Test thoroughly before submitting
+- 📚 **Documentation**: Update README if adding new features
+
+### **Areas for Contribution**
+
+- 🐛 Bug fixes and improvements
+- 📱 Enhanced mobile experience
+- 🎨 UI/UX improvements
+- 🔧 Performance optimizations
+- 📖 Documentation improvements
+- 🌐 Internationalization (i18n)
+- ⚡ New features and functionality
 
 ---
 
@@ -314,11 +580,39 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 🙏 Acknowledgments
 
-- **Icons8** for the beautiful todo list icon
-- **Tailwind CSS** for the amazing utility-first CSS framework
-- **SweetAlert2** for beautiful modal dialogs
-- **FontAwesome** for comprehensive icon library
-- **PHP Community** for continuous support and resources
+- **[Icons8](https://icons8.com/)** for the beautiful todo list icon
+- **[Tailwind CSS](https://tailwindcss.com/)** for the amazing utility-first CSS framework
+- **[SweetAlert2](https://sweetalert2.github.io/)** for beautiful modal dialogs and notifications
+- **[FontAwesome](https://fontawesome.com/)** for the comprehensive icon library
+- **[jQuery](https://jquery.com/)** for reliable DOM manipulation and AJAX
+- **[Dribbble](https://dribbble.com/)** design community for mobile table design inspiration
+- **[PHP Community](https://www.php.net/community.php)** for continuous support and resources
+- **[MySQL](https://www.mysql.com/)** for robust database management
+- **[npm](https://www.npmjs.com/)** ecosystem for frontend development tools
+
+### **Special Thanks**
+
+- Modern web development community for responsive design best practices
+- Security researchers for encryption and session management insights
+- Mobile UX designers for touch-friendly interface guidelines
+- Open source contributors who make projects like this possible
+
+---
+
+## 🚀 Future Enhancements
+
+We're constantly working to improve the ToDo List app. Here are some planned features:
+
+- 📊 **Advanced Analytics** - Detailed productivity reports and charts
+- 🔔 **Push Notifications** - Task reminders and deadline alerts
+- 🌙 **Dark Mode** - Eye-friendly dark theme option
+- 📤 **Export Features** - PDF and Excel export functionality
+- 🔄 **Task Sync** - Cloud synchronization across devices
+- 👥 **Team Collaboration** - Shared tasks and team workspaces
+- 🎯 **Goals & Milestones** - Long-term goal tracking
+- 🏷️ **Advanced Tagging** - Multiple tags per task
+- 🔍 **Advanced Search** - Full-text search with filters
+- 📱 **Progressive Web App** - Offline functionality and app-like experience
 
 ---
 
