@@ -96,6 +96,7 @@ This is a **full-featured ToDo List application** built with modern web technolo
 - MySQL 8.0+ or MariaDB
 - Web Server (Apache, Nginx, or Laragon)
 - Node.js and npm for building CSS assets
+- Composer 
 
 ### Quick Setup
 
