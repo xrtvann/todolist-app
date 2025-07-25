@@ -112,6 +112,10 @@ This is a **full-featured ToDo List application** built with modern web technolo
    npm install
    ```
 
+   ```bash
+   composer install
+   ```
+
 3. **Setup environment:**
 
    ```bash
